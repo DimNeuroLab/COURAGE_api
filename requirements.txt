@@ -1,0 +1,6 @@
+Flask
+requests
+tensorflow==2.4.0
+mtcnn
+opencv
+deepface
