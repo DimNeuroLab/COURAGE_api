@@ -4,3 +4,9 @@ tensorflow==2.4.0
 mtcnn
 opencv
 deepface
+nltk
+gensim
+scikit-learn
+torch
+transformers
+numpy

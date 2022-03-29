@@ -152,3 +152,7 @@ cython_debug/
 .idea/
 
 .DS_Store
+/testing/
+/courage_algorithms/embeddings/
+/courage_algorithms/models/
+/courage_algorithms/resources/
