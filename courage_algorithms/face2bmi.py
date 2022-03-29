@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from mtcnn.mtcnn import MTCNN
 import tensorflow as tf
+from setup import get_working_dir
 
 
 def crop_img(image, x, y, w, h):
@@ -14,7 +15,7 @@ def detect_face(image):
     return box
 
 
-def get_label(y):
+def get_bmi_label(y):
     if y < 18.5:
         return 'Underweight'
     elif y < 25:
@@ -30,7 +31,7 @@ def get_label(y):
 
 
 def load_model():
-    custom_vgg_model = tf.keras.models.load_model('../courage_algorithms/models/bmi_detector/bmi_detector.h5')
+    custom_vgg_model = tf.keras.models.load_model(get_working_dir() + '/courage_algorithms/models/bmi_detector/bmi_detector.h5')
     return custom_vgg_model
 
 

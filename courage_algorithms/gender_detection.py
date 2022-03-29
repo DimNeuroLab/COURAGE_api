@@ -14,7 +14,7 @@ def detect_face(image):
     return box
 
 
-def get_label(y):
+def get_gender_label(y):
     label_int = np.argmax(y)
     if label_int == 0:
         return 'female'
@@ -30,4 +30,4 @@ def predict_gender_by_image(image):
     image = image / 255.0
     gender_model = DeepFace.build_model('Gender')
     prediction = gender_model.predict(image[np.newaxis, :, :, :])[0]
-    return get_label(prediction)
+    return get_gender_label(prediction)

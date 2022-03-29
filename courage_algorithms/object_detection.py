@@ -1,11 +1,12 @@
 import numpy as np
 import cv2
+from setup import get_working_dir
 
 
 def object_detection_algorithm(image, input_confidence=0.5, input_threshold=0.3, swap_rb=False):
-    labels = open('../courage_algorithms/models/object_detector/coco.names').read().strip().split("\n")
-    net = cv2.dnn.readNetFromDarknet('../courage_algorithms/models/object_detector/yolov3.cfg',
-                                     '../courage_algorithms/models/object_detector/yolov3.weights')
+    labels = open(get_working_dir() + '/courage_algorithms/models/object_detector/coco.names').read().strip().split("\n")
+    net = cv2.dnn.readNetFromDarknet(get_working_dir() + '/courage_algorithms/models/object_detector/yolov3.cfg',
+                                     get_working_dir() + '/courage_algorithms/models/object_detector/yolov3.weights')
     (H, W) = image.shape[:2]
     ln = net.getLayerNames()
     ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
