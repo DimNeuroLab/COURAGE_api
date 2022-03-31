@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request, json
-from courage_algorithms.face2bmi import *
-from courage_algorithms.object_detection import *
-from courage_algorithms.gender_detection import *
-from courage_algorithms.emotion_IT import *
-from courage_algorithms.sentiment_IT import *
-from courage_algorithms.sentiment_EN import *
-from courage_algorithms.hate_speech_detection_EN_SemEval19 import *
+from courage_algorithms.image_algorithms.face2bmi import *
+from courage_algorithms.image_algorithms.object_detection import *
+from courage_algorithms.image_algorithms.gender_detection import *
+from courage_algorithms.IT_text_algorithms.emotion_IT import *
+from courage_algorithms.IT_text_algorithms.sentiment_IT import *
+from courage_algorithms.EN_text_algorithms.sentiment_EN import *
+from courage_algorithms.EN_text_algorithms.hate_speech_detection_EN_SemEval19 import *
 import json
 import base64
 from io import BytesIO
@@ -107,7 +107,7 @@ def detect_objects():
     return output, status_code
 
 
-@api_blueprint.route("sentiment_IT/", methods=["POST"])
+@api_blueprint.route("IT/sentiment/", methods=["POST"])
 def predict_sentiment_italian():
     """
     Predict Sentiment of an Italian Text.
@@ -131,7 +131,7 @@ def predict_sentiment_italian():
     return output, status_code
 
 
-@api_blueprint.route("emotion_IT/", methods=["POST"])
+@api_blueprint.route("IT/emotion/", methods=["POST"])
 def predict_emotion_italian():
     """
     Predict Emotion of an Italian Text.
@@ -155,7 +155,7 @@ def predict_emotion_italian():
     return output, status_code
 
 
-@api_blueprint.route("emotion_EN/", methods=["POST"])
+@api_blueprint.route("EN/sentiment/", methods=["POST"])
 def predict_sentiment_english():
     """
     Predict Sentiment of an English Text.
@@ -180,7 +180,7 @@ def predict_sentiment_english():
     return output, status_code
 
 
-@api_blueprint.route("hate_speech_EN_SemEval19/", methods=["POST"])
+@api_blueprint.route("EN/hate_speech_semeval19/", methods=["POST"])
 def predict_hate_speech_english_semeval19():
     """
     Predict Hate Speech Characteristics of an English Text (Trained on SemEval19 dataset).
