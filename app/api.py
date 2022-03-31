@@ -4,6 +4,8 @@ from courage_algorithms.object_detection import *
 from courage_algorithms.gender_detection import *
 from courage_algorithms.emotion_IT import *
 from courage_algorithms.sentiment_IT import *
+from courage_algorithms.sentiment_EN import *
+from courage_algorithms.hate_speech_detection_EN_SemEval19 import *
 import json
 import base64
 from io import BytesIO
@@ -145,6 +147,56 @@ def predict_emotion_italian():
         label, confidence = predict_emotion_it(text)
         output = json.dumps({'label': label,
                              'confidence': confidence})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("emotion_EN/", methods=["POST"])
+def predict_sentiment_english():
+    """
+    Predict Sentiment of an English Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        neg, neu, pos = predict_sentiment_en(text)
+        output = json.dumps({'negative': neg,
+                             'neutral': neu,
+                             'positive': pos})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("hate_speech_EN_SemEval19/", methods=["POST"])
+def predict_hate_speech_english_semeval19():
+    """
+    Predict Hate Speech Characteristics of an English Text (Trained on SemEval19 dataset).
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        hateful, targeted, aggressive = predict_hate_speech_en_semeval19(text)
+        output = json.dumps({'hateful': hateful,
+                             'targeted': targeted,
+                             'aggressive': aggressive})
         status_code = 200
     except:
         # error
