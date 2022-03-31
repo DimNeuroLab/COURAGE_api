@@ -25,7 +25,7 @@ def predict_sentiment_it(sentence):
     loss, logits = outputs[:2]
     logits = logits.squeeze(0)
 
-    proba = torch.nn.functional.softmax(logits, dim=0)
+    proba = torch.softmax(logits, dim=0)
     negative, positive = proba
 
     return np.round(negative.item(), 4), np.round(positive.item(), 4)

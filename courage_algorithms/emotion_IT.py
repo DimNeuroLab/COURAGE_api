@@ -25,7 +25,7 @@ def predict_emotion_it(sentence):
     loss, logits = outputs[:2]
     logits = logits.squeeze(0)
 
-    proba = torch.nn.functional.softmax(logits, dim=0)
+    proba = torch.softmax(logits, dim=0)
     proba = np.array(proba.detach().numpy())
 
     label_names = ['anger', 'fear', 'joy', 'sadness']
