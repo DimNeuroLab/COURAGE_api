@@ -6,6 +6,8 @@ from courage_algorithms.IT_text_algorithms.emotion_IT import *
 from courage_algorithms.IT_text_algorithms.sentiment_IT import *
 from courage_algorithms.EN_text_algorithms.sentiment_EN import *
 from courage_algorithms.EN_text_algorithms.hate_speech_detection_EN_SemEval19 import *
+from courage_algorithms.ES_text_algorithms.sentiment_ES import *
+from courage_algorithms.DE_text_algorithms.sentiment_DE import *
 import json
 import base64
 from io import BytesIO
@@ -197,6 +199,56 @@ def predict_hate_speech_english_semeval19():
         output = json.dumps({'hateful': hateful,
                              'targeted': targeted,
                              'aggressive': aggressive})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("ES/sentiment/", methods=["POST"])
+def predict_sentiment_spanish():
+    """
+    Predict Sentiment of a Spanish Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        neg, neu, pos = predict_sentiment_es(text)
+        output = json.dumps({'negative': neg,
+                             'neutral': neu,
+                             'positive': pos})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("DE/sentiment/", methods=["POST"])
+def predict_sentiment_german():
+    """
+    Predict Sentiment of a German Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        neg, neu, pos = predict_sentiment_de(text)
+        output = json.dumps({'negative': neg,
+                             'neutral': neu,
+                             'positive': pos})
         status_code = 200
     except:
         # error
