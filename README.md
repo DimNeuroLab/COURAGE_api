@@ -26,7 +26,7 @@ There are several endpoints:
 | Method      | EN  | IT  | ES  | DE  |
 |-------------|:---:|:---:|:---:|:---:|
 | Sentiment   | `X` | `X` | `X` | `X` |
-| Emotion     | `X` | `X` | `-` | `-` |
+| Emotion     | `X` | `X` | `X` | `-` |
 | Hate Speech | `X` | `P` | `-` | `P` |
 | Fake News   | `P` | `-` | `-` | `-` |
 
@@ -52,6 +52,7 @@ There are several endpoints:
 | Endpoint       | HTTP method | Requires auth? | Description                                                                                                           | Returned data                                                                                                                                                                                                                                                                                                                                                                   | Requested data format        | 
 |----------------|-------------|----------------|-----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
 | /ES/sentiment/ | POST        | no             | Sentiment prediction based on a Spanish text. Returns positive/neutral/negative sentiment scores on success, else 444 | **200 OK** `{'negative': <neg>, 'neutral': <neu>, 'positive': <pos>}` on success, where `<neg>` is the probability (float) of negative sentiment, `<neu>` the probability of neutral sentiment and `<pos>` the probability of positive sentiment, `<neg> + <neu> + <pos> = 1`. <br /> **400 Missing Arg** if no text is passed to the endpoint. <br /> **444 Bad Request** else | `{'text': <text>}` as string |
+| /ES/emotion/   | POST        | no             | Emotion prediction based on a Spanish text. Returns emotion type and confidence score on success, else 444            | **200 OK** `{'label': <label>, 'confidence': <confidence>}` on success, where `<label>` is the emotion type as string and `<confidence>` the probability of the emotion. <br /> **400 Missing Arg** if no text is passed to the endpoint. <br /> **444 Bad Request** else                                                                                                       | `{'text': <text>}` as string |
 
 ### German
 
