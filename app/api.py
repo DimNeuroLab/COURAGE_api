@@ -1,21 +1,27 @@
 from flask import Blueprint, jsonify, request, json
-from courage_algorithms.image_algorithms.face2bmi import *
-from courage_algorithms.image_algorithms.object_detection import *
-from courage_algorithms.image_algorithms.gender_detection import *
-from courage_algorithms.IT_text_algorithms.emotion_IT import *
-from courage_algorithms.IT_text_algorithms.sentiment_IT import *
-from courage_algorithms.EN_text_algorithms.sentiment_EN import *
-from courage_algorithms.EN_text_algorithms.hate_speech_detection_EN_SemEval19 import *
-from courage_algorithms.ES_text_algorithms.sentiment_ES import *
-from courage_algorithms.DE_text_algorithms.sentiment_DE import *
+from courage_algorithms.image_algorithms.face2bmi import predict_bmi_by_image, get_bmi_label
+from courage_algorithms.image_algorithms.object_detection import object_detection_algorithm
+from courage_algorithms.image_algorithms.gender_detection import predict_gender_by_image
+from courage_algorithms.IT_text_algorithms.emotion_IT import predict_emotion_it
+from courage_algorithms.IT_text_algorithms.sentiment_IT import predict_sentiment_it
+from courage_algorithms.EN_text_algorithms.sentiment_EN import predict_sentiment_en
+from courage_algorithms.EN_text_algorithms.hate_speech_detection_EN_SemEval19 import predict_hate_speech_en_semeval19
+from courage_algorithms.ES_text_algorithms.sentiment_ES import predict_sentiment_es
+from courage_algorithms.DE_text_algorithms.sentiment_DE import predict_sentiment_de
+from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
 import json
 import base64
 from io import BytesIO
 from PIL import Image
+import numpy as np
 
 
 # REST-Api
 api_blueprint = Blueprint("api", __name__)
+
+################################################################################################################
+# GENERAL
+################################################################################################################
 
 
 @api_blueprint.route("info/", methods=["GET"])
@@ -25,6 +31,11 @@ def get_api_info():
     """
     res = {"COURAGE": "api", "version": "1.0"}
     return jsonify(res)
+
+
+################################################################################################################
+# IMAGES
+################################################################################################################
 
 
 @api_blueprint.route("predict_bmi/", methods=["POST"])
@@ -109,52 +120,14 @@ def detect_objects():
     return output, status_code
 
 
-@api_blueprint.route("IT/sentiment/", methods=["POST"])
-def predict_sentiment_italian():
-    """
-    Predict Sentiment of an Italian Text.
-    """
-    data = request.json
-    if 'text' in data:
-        text = data['text']
-    else:
-        # no text posted
-        status_code = 400
-        return status_code
-    try:
-        neg, pos = predict_sentiment_it(text)
-        output = json.dumps({'negative': neg,
-                             'positive': pos})
-        status_code = 200
-    except:
-        # error
-        output = ""
-        status_code = 444
-    return output, status_code
+################################################################################################################
+# TEXT
+################################################################################################################
 
 
-@api_blueprint.route("IT/emotion/", methods=["POST"])
-def predict_emotion_italian():
-    """
-    Predict Emotion of an Italian Text.
-    """
-    data = request.json
-    if 'text' in data:
-        text = data['text']
-    else:
-        # no text posted
-        status_code = 400
-        return status_code
-    try:
-        label, confidence = predict_emotion_it(text)
-        output = json.dumps({'label': label,
-                             'confidence': confidence})
-        status_code = 200
-    except:
-        # error
-        output = ""
-        status_code = 444
-    return output, status_code
+###########################
+# # # # # ENGLISH # # # # #
+###########################
 
 
 @api_blueprint.route("EN/sentiment/", methods=["POST"])
@@ -207,6 +180,88 @@ def predict_hate_speech_english_semeval19():
     return output, status_code
 
 
+@api_blueprint.route("EN/emotion/", methods=["POST"])
+def predict_emotion_english():
+    """
+    Predict Emotion of an English Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        label, confidence = predict_emotion_en(text)
+        output = json.dumps({'label': label,
+                             'confidence': confidence})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+###########################
+# # # # # ITALIAN # # # # #
+###########################
+
+
+@api_blueprint.route("IT/sentiment/", methods=["POST"])
+def predict_sentiment_italian():
+    """
+    Predict Sentiment of an Italian Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        neg, pos = predict_sentiment_it(text)
+        output = json.dumps({'negative': neg,
+                             'positive': pos})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("IT/emotion/", methods=["POST"])
+def predict_emotion_italian():
+    """
+    Predict Emotion of an Italian Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        label, confidence = predict_emotion_it(text)
+        output = json.dumps({'label': label,
+                             'confidence': confidence})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+###########################
+# # # # # SPANISH # # # # #
+###########################
+
+
 @api_blueprint.route("ES/sentiment/", methods=["POST"])
 def predict_sentiment_spanish():
     """
@@ -230,6 +285,11 @@ def predict_sentiment_spanish():
         output = ""
         status_code = 444
     return output, status_code
+
+
+##########################
+# # # # # GERMAN # # # # #
+##########################
 
 
 @api_blueprint.route("DE/sentiment/", methods=["POST"])
