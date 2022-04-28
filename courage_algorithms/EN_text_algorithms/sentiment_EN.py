@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from setup import get_working_dir
+from path_setup import get_working_dir
 
 
 def load_tokenizer():

@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from setup import get_working_dir
+from path_setup import get_working_dir
 
 
 def object_detection_algorithm(image, input_confidence=0.5, input_threshold=0.3, swap_rb=False):
