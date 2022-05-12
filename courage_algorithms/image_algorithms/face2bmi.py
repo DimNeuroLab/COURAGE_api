@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from mtcnn.mtcnn import MTCNN
 import tensorflow as tf
-from path_setup import get_working_dir
+from courage_algorithms.scripts.path_setup import get_working_dir
 
 
 def crop_img(image, x, y, w, h):

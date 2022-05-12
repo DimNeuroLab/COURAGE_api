@@ -1,17 +1,17 @@
 import torch
 import numpy as np
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from path_setup import get_working_dir
+from courage_algorithms.scripts.path_setup import get_working_dir
 
 
 def load_tokenizer():
-    return AutoTokenizer.from_pretrained("pysentimiento/robertuito-sentiment-analysis",
-                                         cache_dir=get_working_dir() + '/courage_algorithms/models/RoBERTuito_sentiment_ES')
+    return AutoTokenizer.from_pretrained(get_working_dir() + '/courage_algorithms/models/RoBERTuito_sentiment_ES',
+                                         local_files_only=True)
 
 
 def load_model():
-    return AutoModelForSequenceClassification.from_pretrained("pysentimiento/robertuito-sentiment-analysis",
-                                                              cache_dir=get_working_dir() + '/courage_algorithms/models/RoBERTuito_sentiment_ES')
+    return AutoModelForSequenceClassification.from_pretrained(get_working_dir() + '/courage_algorithms/models/RoBERTuito_sentiment_ES',
+                                                              local_files_only=True)
 
 
 def predict_sentiment_es(sentence):

@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from path_setup import get_working_dir
+from courage_algorithms.scripts.path_setup import get_working_dir
 
 
 def object_detection_algorithm(image, input_confidence=0.5, input_threshold=0.3, swap_rb=False):
