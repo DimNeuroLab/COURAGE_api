@@ -2,10 +2,11 @@
 # from app.api import api_blueprint
 # from web import api_blueprint
 from api import api_blueprint
+from web import web_blueprint
 from flask import Flask, render_template_string
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="webapp")
 
 api_url_prefix = "/api/1.0/"
 
@@ -13,7 +14,7 @@ api_url_prefix = "/api/1.0/"
 app.register_blueprint(api_blueprint, url_prefix=api_url_prefix)
 
 # load functions serving the webapp
-# app.register_blueprint(web_blueprint)
+app.register_blueprint(web_blueprint)
 
 
 if __name__ == "__main__":
