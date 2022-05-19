@@ -30,7 +30,7 @@ def predict_emotion_es(sentence):
     label_names = ['others', 'joy', 'sadness', 'anger', 'surprise', 'disgust', 'fear']
     ranking = np.argsort(proba)
     ranking = ranking[::-1]
+    output = {}
     for i in range(proba.shape[0]):
-        l = label_names[ranking[i]]
-        s = proba[ranking[i]]
-        return l, np.round(float(s), 4)
+        output[label_names[ranking[i]]] = np.round(float(proba[ranking[i]]), 4)
+    return output

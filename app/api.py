@@ -195,9 +195,8 @@ def predict_emotion_english():
         status_code = 400
         return status_code
     try:
-        label, confidence = predict_emotion_en(text)
-        output = json.dumps({'label': label,
-                             'confidence': confidence})
+        emotion_dict = predict_emotion_en(text)
+        output = json.dumps(emotion_dict)
         status_code = 200
     except:
         # error
@@ -248,9 +247,8 @@ def predict_emotion_italian():
         status_code = 400
         return status_code
     try:
-        label, confidence = predict_emotion_it(text)
-        output = json.dumps({'label': label,
-                             'confidence': confidence})
+        emotion_dict = predict_emotion_it(text)
+        output = json.dumps(emotion_dict)
         status_code = 200
     except:
         # error
@@ -302,9 +300,8 @@ def predict_emotion_spanish():
         status_code = 400
         return status_code
     try:
-        label, confidence = predict_emotion_es(text)
-        output = json.dumps({'label': label,
-                             'confidence': confidence})
+        emotion_dict = predict_emotion_es(text)
+        output = json.dumps(emotion_dict)
         status_code = 200
     except:
         # error
@@ -356,11 +353,8 @@ def predict_toxicity_german():
         status_code = 400
         return status_code
     try:
-        label = get_ensemble_prediction_toxic_de(text)
-        if label == 0:
-            output = json.dumps({'0': 'not toxic'})
-        else:
-            output = json.dumps({'1': 'toxic'})
+        toxic_de = get_ensemble_prediction_toxic_de(text)
+        output = json.dumps(toxic_de)
         status_code = 200
     except:
         # error

@@ -69,6 +69,8 @@ def get_ensemble_prediction_toxic_de(text):
     count_1 = predictions.count(1)
     print(count_0, count_1)
     if count_0 > count_1:
-        return 0
+        return {'not toxic': 1,
+                'toxic': 0}
     else:
-        return 1
+        return {'not toxic': 0,
+                'toxic': 1}
