@@ -1,0 +1,60 @@
+body {
+    background-color: white;
+    color: black;
+}
+
+html,body{
+    height: 100%
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 2%;
+}
+
+.header {
+    background-color: #27ae60;
+    color: black;
+}
+
+.navbar-custom {
+    background-color: #27ae60;
+    height: 100px;
+}
+
+.btn-success {
+    background-color: #27ae60;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #7dcea0;
+    border: none;
+}
+
+#spinner{
+    background: none;
+}
+
+footer{
+    height: 3%;
+}
+
+#bottom-left {
+    height: 100%;
+    width: 50%;
+    float: left;
+    background-color: #900C3F;
+}
+
+#bottom-right {
+    height: 100%;
+    width: 50%;
+    overflow: hidden;
+    background-color: #7f8c8d;
+}
+
+/*
+infosci rot: #900C3F
+ur grau: #7f8c8d
+*/
