@@ -10,6 +10,7 @@ from courage_algorithms.ES_text_algorithms.sentiment_ES import predict_sentiment
 from courage_algorithms.DE_text_algorithms.sentiment_DE import predict_sentiment_de
 from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
 from courage_algorithms.ES_text_algorithms.emotion_ES import predict_emotion_es
+from courage_algorithms.DE_text_algorithms.toxicity_DE import get_ensemble_prediction_toxic_de
 import json
 import base64
 from io import BytesIO
@@ -334,6 +335,32 @@ def predict_sentiment_german():
         output = json.dumps({'negative': neg,
                              'neutral': neu,
                              'positive': pos})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("DE/toxic/", methods=["POST"])
+def predict_toxicity_german():
+    """
+    Predict whether a German Text is toxic or not.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        label = get_ensemble_prediction_toxic_de(text)
+        if label == 0:
+            output = json.dumps({'0': 'not toxic'})
+        else:
+            output = json.dumps({'1': 'toxic'})
         status_code = 200
     except:
         # error
