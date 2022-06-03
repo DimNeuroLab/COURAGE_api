@@ -1,5 +1,4 @@
 import os
-
 from flask import Blueprint, jsonify, request, json
 from courage_algorithms.image_algorithms.face2bmi import predict_bmi_by_image, get_bmi_label
 from courage_algorithms.image_algorithms.object_detection import object_detection_algorithm
@@ -13,6 +12,7 @@ from courage_algorithms.DE_text_algorithms.sentiment_DE import predict_sentiment
 from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
 from courage_algorithms.ES_text_algorithms.emotion_ES import predict_emotion_es
 from courage_algorithms.DE_text_algorithms.toxicity_DE import get_ensemble_prediction_toxic_de
+from courage_algorithms.scripts.path_setup import get_working_dir
 import json
 import base64
 from io import BytesIO
@@ -43,9 +43,9 @@ def load_twitter_data():
     Load tweets to serve demo page.
     """
     tweets = []
-    for file in os.listdir('webapp/tweets'):
+    for file in os.listdir(get_working_dir() + '/app/webapp/tweets'):
         if file.endswith('json'):
-            with open('webapp/tweets/' + file) as json_file:
+            with open(get_working_dir() + '/app/webapp/tweets/' + file) as json_file:
                 tweets.append(json.load(json_file))
     res = {"tweets": tweets}
     return jsonify(res)
