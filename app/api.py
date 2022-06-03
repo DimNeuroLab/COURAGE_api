@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, jsonify, request, json
 from courage_algorithms.image_algorithms.face2bmi import predict_bmi_by_image, get_bmi_label
 from courage_algorithms.image_algorithms.object_detection import object_detection_algorithm
@@ -32,6 +34,20 @@ def get_api_info():
     Return information about the api and the server.
     """
     res = {"COURAGE": "api", "version": "1.0"}
+    return jsonify(res)
+
+
+@api_blueprint.route("load_twitter_data/", methods=["GET"])
+def load_twitter_data():
+    """
+    Load tweets to serve demo page.
+    """
+    tweets = []
+    for file in os.listdir('webapp/tweets'):
+        if file.endswith('json'):
+            with open('webapp/tweets/' + file) as json_file:
+                tweets.append(json.load(json_file))
+    res = {"tweets": tweets}
     return jsonify(res)
 
 

@@ -14,3 +14,9 @@ def get_path(path):
 def get_root():
     """returns the main application page"""
     return render_template("courage_demo.html")
+
+
+@web_blueprint.route("/twitter_demo", methods=["GET"])
+def show_twitter_demo():
+    """returns the twitter demo page"""
+    return render_template("twitter_demo.html")
