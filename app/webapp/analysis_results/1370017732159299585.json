@@ -1,0 +1,1 @@
+{"sentiment": {"negative": 0.0018, "neutral": 0.2388, "positive": 0.7594}, "emotion": {"anger": 0.6193, "optimism": 0.1775, "sadness": 0.1572, "joy": 0.046}, "hate_speech": {"hateful": 0.0073, "targeted": 0.0028, "aggressive": 0.0037}}
