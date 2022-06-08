@@ -45,9 +45,40 @@ def load_twitter_data():
     tweets = []
     for file in os.listdir(get_working_dir() + '/app/webapp/tweets'):
         if file.endswith('json'):
+            file_data = []
             with open(get_working_dir() + '/app/webapp/tweets/' + file) as json_file:
-                tweets.append(json.load(json_file))
+                file_data.append(json.load(json_file))
+            with open(get_working_dir() + '/app/webapp/analysis_results/' + file) as json_file:
+                file_data.append(json.load(json_file))
+            tweets.append(file_data)
     res = {"tweets": tweets}
+    return jsonify(res)
+
+
+@api_blueprint.route("analyze_twitter_data/", methods=["GET"])
+def analyze_twitter_data():
+    """
+    Run analysis algorithms on available tweets.
+    """
+    analysis_results = {}
+    for file in os.listdir(get_working_dir() + '/app/webapp/tweets'):
+        if file.endswith('json'):
+            print('processing file...', file)
+
+            with open(get_working_dir() + '/app/webapp/tweets/' + file) as json_file:
+                tweet_text = json.load(json_file)['text']
+
+            neg, neu, pos = predict_sentiment_en(tweet_text)
+            analysis_results['sentiment'] = {'negative': neg, 'neutral': neu, 'positive': pos}
+
+            analysis_results['emotion'] = predict_emotion_en(tweet_text)
+
+            hateful, targeted, aggressive = predict_hate_speech_en_semeval19(tweet_text)
+            analysis_results['hate_speech'] = {'hateful': hateful, 'targeted': targeted, 'aggressive': aggressive}
+
+            with open(get_working_dir() + '/app/webapp/analysis_results/' + file, 'w') as json_file:
+                json.dump(analysis_results, json_file)
+    res = {"status": 'SUCCESSFUL'}
     return jsonify(res)
 
 
