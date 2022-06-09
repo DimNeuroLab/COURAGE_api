@@ -12,6 +12,7 @@ from courage_algorithms.DE_text_algorithms.sentiment_DE import predict_sentiment
 from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
 from courage_algorithms.ES_text_algorithms.emotion_ES import predict_emotion_es
 from courage_algorithms.DE_text_algorithms.toxicity_DE import get_ensemble_prediction_toxic_de
+from courage_algorithms.IT_text_algorithms.hate_speech_detection_IT_RUG import predict_hate_speech_it
 from courage_algorithms.scripts.path_setup import get_working_dir
 import json
 import base64
@@ -296,6 +297,29 @@ def predict_emotion_italian():
     try:
         emotion_dict = predict_emotion_it(text)
         output = json.dumps(emotion_dict)
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("IT/hate_speech/", methods=["POST"])
+def predict_hate_speech_italian():
+    """
+    Predict whether an Italian Text is hate speech or not.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        hate_speech_it = predict_hate_speech_it(text)
+        output = json.dumps(hate_speech_it)
         status_code = 200
     except:
         # error
