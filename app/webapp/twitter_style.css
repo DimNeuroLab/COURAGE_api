@@ -247,7 +247,8 @@ body {
   display: flex;
   align-items: flex-start;
   cursor: pointer;
-  background-color: #d5f5e3;
+  background-color: var(--twitter-color);
+  color: white;
   border: none;
   outline: none;
   padding: 10px;
@@ -257,7 +258,7 @@ body {
 }
 
 .analysis-button:hover {
-  background-color: #7dcea0;
+  background-color: #2e86c1;
 }
 
 .analysis {
