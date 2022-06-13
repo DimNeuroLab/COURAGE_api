@@ -1,9 +1,7 @@
-# from app.web import api_blueprint
-# from app.api import api_blueprint
-# from web import api_blueprint
 from api import api_blueprint
 from web import web_blueprint
 from flask import Flask, render_template_string
+from courage_algorithms.IT_text_algorithms.hate_speech_detection_IT_RUG import Embeddings
 
 
 app = Flask(__name__, template_folder="webapp")

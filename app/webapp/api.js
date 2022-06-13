@@ -80,6 +80,9 @@ function sendApiRequest() {
     if (language == "EN" && algorithm == "hate") {
         algorithm = "hate_speech_semeval19"
     }
+    if (language == "IT" && algorithm == "hate") {
+        algorithm = "hate_speech"
+    }
     $.ajax
     ({
         type: "POST",
