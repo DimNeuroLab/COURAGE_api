@@ -155,8 +155,7 @@ body {
 .post {
   display: flex;
   align-items: flex-start;
-  border-bottom: 1px solid var(--twitter-background);
-  padding-bottom: 10px;
+  padding-bottom: 5px;
 }
 
 .post__body img {
@@ -249,12 +248,12 @@ body {
   align-items: flex-start;
   cursor: pointer;
   background-color: #d5f5e3;
-  width: 100%;
   border: none;
   outline: none;
   padding: 10px;
-  margin-bottom: 0px;
   border-bottom: 1px solid var(--twitter-background);
+  border-radius: 20px;
+  margin: 0 auto;
 }
 
 .analysis-button:hover {
