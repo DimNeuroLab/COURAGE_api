@@ -20,3 +20,9 @@ def get_root():
 def show_twitter_demo():
     """returns the twitter demo page"""
     return render_template("twitter_demo.html")
+
+
+@web_blueprint.route("/algorithm_info", methods=["GET"])
+def show_algorithm_info():
+    """returns the algorithm info page"""
+    return render_template("algorithm_info.html")

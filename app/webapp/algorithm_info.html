@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Algorithm Info</title>
+    <script src="libs/jquery.min.js" type="text/javascript"></script>
+    <script src="algorithm_info.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="algorithm_tables_style.css"/>
+</head>
+<body onload="load_algorithm_samples()">
+    <h1>English algorithms predictions overview</h1>
+
+    <h3>English Sentiment <a href="https://huggingface.co/finiteautomata/bertweet-base-sentiment-analysis">[MODEL]</a>
+    <a href="https://www.dropbox.com/s/byzr8yoda6bua1b/2017_English_final.zip?file_subpath=%2F2017_English_final%2FGOLD">[DATASET]</a></h3>
+
+    <div class="algo_table" id="EN_sentiment_output">
+    </div>
+
+    <h3>English Emotion <a href="https://huggingface.co/cardiffnlp/twitter-roberta-base-emotion">[MODEL]</a>
+    <a href="https://github.com/cardiffnlp/tweeteval">[DATASET]</a></h3>
+
+    <div class="algo_table" id="EN_emotion_output">
+    </div>
+
+    <h3>English Hate Speech <a href="https://huggingface.co/pysentimiento/bertweet-hate-speech">[MODEL]</a>
+    <a href="https://aclanthology.org/S19-2007.pdf">[DATASET]</a></h3>
+
+    <div class="algo_table" id="EN_hate_speech_output">
+    </div>
+
+</body>
+</html>

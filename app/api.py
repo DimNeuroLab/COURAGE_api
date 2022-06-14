@@ -83,6 +83,34 @@ def analyze_twitter_data():
     return jsonify(res)
 
 
+@api_blueprint.route("load_algorithm_results/", methods=["POST"])
+def load_algorithm_data():
+    """
+    Get prediction examples of a specific algorithm.
+    """
+    data = request.json
+    if 'file_name' in data:
+        file_name = data['file_name']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        file_path = get_working_dir() + '/app/webapp/algorithms_predictions/' + file_name
+        file_content = []
+        with open(file_path, 'r') as algo_file:
+            for line in algo_file:
+                line = line.strip('\n').split('\t')
+                file_content.append(line)
+        output = json.dumps({'predictions': file_content})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
 ################################################################################################################
 # IMAGES
 ################################################################################################################
