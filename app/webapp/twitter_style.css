@@ -244,7 +244,7 @@ body {
 }
 
 .analysis-button {
-  display: flex;
+  display: inline-block;
   align-items: flex-start;
   cursor: pointer;
   background-color: var(--twitter-color);
@@ -254,21 +254,65 @@ body {
   padding: 10px;
   border-bottom: 1px solid var(--twitter-background);
   border-radius: 20px;
-  margin: 0 auto;
+  margin-top: 0;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-bottom: 5px;
 }
 
 .analysis-button:hover {
   background-color: #2e86c1;
 }
 
+.tweets-topic-button, .tweets-user-button {
+  display: inline-block;
+  align-items: flex-start;
+  cursor: pointer;
+  background-color: var(--twitter-color);
+  color: white;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-bottom: 1px solid var(--twitter-background);
+  border-radius: 20px;
+  margin-top: 0;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+.tweets-topic-button:hover, .tweets-user-button:hover {
+  background-color: #2e86c1;
+}
+
 .analysis {
+  padding: 0 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  font-size: 15px;
+  margin-bottom: 0px;
+  background-color: var(--twitter-background);
+}
+
+.analysis-user-tweets {
+  padding: 0 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  font-size: 15px;
+  margin-bottom: 0px;
+  background-color: var(--twitter-background);
+}
+
+.analysis-topic-tweets {
   padding: 0 10px;
   border-bottom: 1px solid var(--twitter-background);
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
   font-size: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   background-color: var(--twitter-background);
 }
 
@@ -278,4 +322,13 @@ body {
 
 .analysis-text {
   margin: 10px;
+}
+
+.user-tweets-text, .topic-tweets-text {
+  padding: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  background-color: white;
 }

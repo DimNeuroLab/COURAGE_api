@@ -19,21 +19,126 @@ async function getData() {
 };
 
 
+async function loadUserTweets(user_id) {
+    var loaded_tweets = [];
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX + "load_tweets_user/",
+        contentType: 'application/json',
+        async: true,
+        data: JSON.stringify({'user_id': user_id}),
+        success: function (response) {
+            loaded_tweets = response['tweets'];
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+    return loaded_tweets;
+};
+
+
+async function loadTopicTweets(topic_name) {
+    var loaded_tweets = [];
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX + "load_tweets_topic/",
+        contentType: 'application/json',
+        async: true,
+        data: JSON.stringify({'topic': topic_name}),
+        success: function (response) {
+            loaded_tweets = response['tweets'];
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+    return loaded_tweets;
+};
+
+
+function closeAll() {
+    var dolls = [];
+    dolls = Array.prototype.concat.apply(dolls, document.getElementsByClassName("analysis-button"));
+    for (let dol of dolls) {
+        dol.classList.remove("active");
+        var content = document.getElementById("analysis-" + dol['id'].split('-')[2])
+        content.style.maxHeight = null;
+    }
+
+    var dolls = [];
+    dolls = Array.prototype.concat.apply(dolls, document.getElementsByClassName("tweets-user-button"));
+    for (let dol of dolls) {
+        dol.classList.remove("active");
+        var content = document.getElementById("user_tweets-" + dol['id'].split('-')[2])
+        content.style.maxHeight = null;
+    }
+
+    var dolls = [];
+    dolls = Array.prototype.concat.apply(dolls, document.getElementsByClassName("tweets-topic-button"));
+    for (let dol of dolls) {
+        dol.classList.remove("active");
+        var content = document.getElementById("topic_tweets-" + dol['id'].split('-')[2])
+        content.style.maxHeight = null;
+    }
+}
+
+
 function add_collapsible() {
-    var coll = document.getElementsByClassName("analysis-button");
+    var coll = [];
+    coll = Array.prototype.concat.apply(coll, document.getElementsByClassName("analysis-button"));
     var i;
 
     for (i = 0; i < coll.length; i++) {
       coll[i].addEventListener("click", function() {
         this.classList.toggle("active");
-        var content = this.nextElementSibling;
+        var content = document.getElementById("analysis-" + this['id'].split('-')[2])
         if (content.style.maxHeight){
           content.style.maxHeight = null;
+          closeAll();
         } else {
+          closeAll();
           content.style.maxHeight = content.scrollHeight + "px";
         }
       });
     }
+
+    var coll = [];
+    coll = Array.prototype.concat.apply(coll, document.getElementsByClassName("tweets-user-button"));
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        //closeAll();
+        this.classList.toggle("active");
+        var content = document.getElementById("user_tweets-" + this['id'].split('-')[2])
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+          closeAll();
+        } else {
+          closeAll();
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+
+    var coll = [];
+    coll = Array.prototype.concat.apply(coll, document.getElementsByClassName("tweets-topic-button"));
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        //closeAll();
+        this.classList.toggle("active");
+        var content = document.getElementById("topic_tweets-" + this['id'].split('-')[2])
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+          closeAll();
+        } else {
+          closeAll();
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+
 }
 
 async function create_tweets() {
@@ -101,13 +206,19 @@ async function create_tweets() {
              '</div>';
          tweet_strings.push(s);
 
-         s = '<button type="button" class="analysis-button">Learn more about this post</button>'
+         s = '<button type="button" id="analysis-button-' + tweet[0]['id_str'] + '" class="analysis-button">Learn more about this post</button>'
+         tweet_strings.push(s);
+
+         s = '<button type="button" id="tweets-user-' + tweet[0]['id_str'] + '" class="tweets-user-button">Other posts of this user</button>'
+         tweet_strings.push(s);
+
+         s = '<button type="button" id="tweets-topic-' + tweet[0]['id_str'] + '" class="tweets-topic-button">Other opinions on that topic</button>'
          tweet_strings.push(s);
 
          var sent_name = tweet[0]['id_str'] + '_sent'
          var emotion_name = tweet[0]['id_str'] + '_emotion'
          var hate_name = tweet[0]['id_str'] + '_hate'
-         s = '<div class="analysis">' +
+         s = '<div id="analysis-' + tweet[0]['id_str'] + '" class="analysis">' +
              // '<div style="height: 200px">' +
              '<p class="analysis-text">Sentiment analysis of this post:</p>' +
              '<canvas class="analysis-canvas" id=' + sent_name + '></canvas>' +
@@ -122,6 +233,30 @@ async function create_tweets() {
              // '</div>' +
              '</div>';
          tweet_strings.push(s);
+
+         s = '<div id="user_tweets-' + tweet[0]['id_str'] + '" class="analysis-user-tweets">';
+         tweet_strings.push(s);
+         user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
+         if (user_tweets.length == 0) {
+            tweet_strings.push("<p class='user-tweets-text'>This user hasn't posted anything else yet...</p>");
+         } else {
+            for (let u_tweet of user_tweets) {
+                tweet_strings.push('<p class="user-tweets-text">' + u_tweet['text'] + '</p>');
+            }
+         }
+         tweet_strings.push('</div>');
+
+         s = '<div id="topic_tweets-' + tweet[0]['id_str'] + '" class="analysis-topic-tweets">';
+         tweet_strings.push(s);
+         topic_tweets = await loadTopicTweets('covid');
+         if (topic_tweets.length == 0) {
+            tweet_strings.push("<p class='topic-tweets-text'>We couldn't find any tweets with similar topic...</p>");
+         } else {
+            for (let t_tweet of topic_tweets) {
+                tweet_strings.push('<p class="topic-tweets-text">' + t_tweet['text'] + '</p>');
+            }
+         }
+         tweet_strings.push('</div>');
 
     }
 
