@@ -60,6 +60,62 @@ def load_twitter_data():
     return jsonify(res), status_code
 
 
+@api_blueprint.route("load_tweets_user/", methods=["POST"])
+def load_tweets_user():
+    """
+    Load timeline tweets of a specific user.
+    """
+    data = request.json
+    if 'user_id' in data:
+        user_id = data['user_id']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        folder_path = get_working_dir() + '/app/webapp/tweets_users/' + user_id
+        tweet_list = []
+        if os.path.exists(folder_path):
+            for file in os.listdir(get_working_dir() + '/app/webapp/tweets_users/' + user_id):
+                if file.endswith('json'):
+                    with open(get_working_dir() + '/app/webapp/tweets_users/' + user_id + '/' + file) as json_file:
+                        tweet_list.append(json.load(json_file))
+        status_code = 200
+        res = {"tweets": tweet_list}
+    except:
+        status_code = 444
+        res = {"tweets": []}
+    return res, status_code
+
+
+@api_blueprint.route("load_tweets_topic/", methods=["POST"])
+def load_tweets_topic():
+    """
+    Load tweets related to a specific topic.
+    """
+    data = request.json
+    if 'topic' in data:
+        topic = data['topic']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        folder_path = get_working_dir() + '/app/webapp/tweets_topics/' + topic
+        tweet_list = []
+        if os.path.exists(folder_path):
+            for file in os.listdir(get_working_dir() + '/app/webapp/tweets_topics/' + topic):
+                if file.endswith('json'):
+                    with open(get_working_dir() + '/app/webapp/tweets_topics/' + topic + '/' + file) as json_file:
+                        tweet_list.append(json.load(json_file))
+        status_code = 200
+        res = {"tweets": tweet_list}
+    except:
+        status_code = 444
+        res = {"tweets": []}
+    return res, status_code
+
+
 @api_blueprint.route("analyze_twitter_data/", methods=["GET"])
 def analyze_twitter_data():
     """
