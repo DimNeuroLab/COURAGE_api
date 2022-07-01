@@ -76,9 +76,9 @@ def load_tweets_user():
         folder_path = get_working_dir() + '/app/webapp/tweets_users/' + user_id
         tweet_list = []
         if os.path.exists(folder_path):
-            for file in os.listdir(get_working_dir() + '/app/webapp/tweets_users/' + user_id):
+            for file in os.listdir(folder_path):
                 if file.endswith('json'):
-                    with open(get_working_dir() + '/app/webapp/tweets_users/' + user_id + '/' + file) as json_file:
+                    with open(folder_path + '/' + file) as json_file:
                         tweet_list.append(json.load(json_file))
         status_code = 200
         res = {"tweets": tweet_list}
@@ -104,9 +104,9 @@ def load_tweets_topic():
         folder_path = get_working_dir() + '/app/webapp/tweets_topics/' + topic
         tweet_list = []
         if os.path.exists(folder_path):
-            for file in os.listdir(get_working_dir() + '/app/webapp/tweets_topics/' + topic):
+            for file in os.listdir(folder_path):
                 if file.endswith('json'):
-                    with open(get_working_dir() + '/app/webapp/tweets_topics/' + topic + '/' + file) as json_file:
+                    with open(folder_path + '/' + file) as json_file:
                         tweet_list.append(json.load(json_file))
         status_code = 200
         res = {"tweets": tweet_list}
@@ -173,6 +173,30 @@ def load_algorithm_data():
         output = ""
         status_code = 444
     return output, status_code
+
+
+@api_blueprint.route("load_user_tweets_analysis/", methods=["POST"])
+def load_user_tweets_analysis():
+    """
+    Get analysis results of a user's tweets.
+    """
+    data = request.json
+    if 'user_id' in data:
+        user_id = data['user_id']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        file_path = get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + user_id + '.json'
+        with open(file_path) as json_file:
+            analysis_results = json.load(json_file)
+        status_code = 200
+    except:
+        # error
+        analysis_results = {}
+        status_code = 444
+    return jsonify(analysis_results), status_code
 
 
 ################################################################################################################

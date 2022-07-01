@@ -39,6 +39,25 @@ async function loadUserTweets(user_id) {
 };
 
 
+async function loadUserTweetsAnalysis(user_id) {
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX + "load_user_tweets_analysis/",
+        contentType: 'application/json',
+        async: true,
+        data: JSON.stringify({'user_id': user_id}),
+        success: function (response) {
+            analysis_result = response;
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+    return analysis_result;
+};
+
+
 async function loadTopicTweets(topic_name) {
     var loaded_tweets = [];
     await $.ajax
@@ -243,6 +262,11 @@ async function create_tweets() {
             for (let u_tweet of user_tweets) {
                 tweet_strings.push('<p class="user-tweets-text">' + u_tweet['text'] + '</p>');
             }
+            tweet_strings.push('<div class="user-post-diagram">' +
+                               '<div class="user-analysis-canvas"><canvas id="user-tweets-sentiment-canvas-' +
+                               tweet[0]['id_str'] + '"></canvas></div>' +
+                               '<div class="user-analysis-canvas"><canvas id="user-tweets-emotion-canvas-' +
+                               tweet[0]['id_str'] + '"></canvas></div></div>');
          }
          tweet_strings.push('</div>');
 
@@ -253,7 +277,8 @@ async function create_tweets() {
             tweet_strings.push("<p class='topic-tweets-text'>We couldn't find any tweets with similar topic...</p>");
          } else {
             for (let t_tweet of topic_tweets) {
-                tweet_strings.push('<p class="topic-tweets-text">' + t_tweet['text'] + '</p>');
+                tweet_strings.push('<p class="topic-tweets-text"><b>' + t_tweet['user']['name'] + '</b><br>' +
+                t_tweet['text'] + '</p>');
             }
          }
          tweet_strings.push('</div>');
@@ -388,6 +413,83 @@ async function create_tweets() {
                  }
              }
          });
+
+         var user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
+         if (user_tweets.length > 0) {
+             var user_tweets_analysis = await loadUserTweetsAnalysis(tweet[0]['user']['id_str']);
+             var user_tweets_sent = 'user-tweets-sentiment-canvas-' + tweet[0]['id_str'];
+             var ctx = document.getElementById(user_tweets_sent);
+             var data_array = [];
+             var labels = [];
+             for (let key in user_tweets_analysis['sentiment']) {
+                 data_array.push(parseFloat(user_tweets_analysis['sentiment'][key]))
+                 labels.push(key)
+             }
+             var myChart = new Chart(ctx, {
+                 type: 'doughnut',
+                 data: {
+                     labels: labels,
+                     datasets: [{
+                         label: 'sentiment',
+                         data: data_array,
+                         backgroundColor: [
+                             'rgba(203, 67, 53, 1)',
+                             'rgba(244, 208, 63, 1)',
+                             'rgba(39, 174, 96, 1)'
+                         ]
+                     }]
+                 },
+                 options: {
+                     responsive: true,
+                     //maintainAspectRatio: false,
+                     legend: {
+                         display: true,
+                         position: 'right',
+                         labels: {
+                             fontColor: 'rgb(0,0,0)'
+                         },
+                         onClick: (e) => e.stopPropagation(),
+                     }
+                 }
+             });
+
+             var user_tweets_emotion = 'user-tweets-emotion-canvas-' + tweet[0]['id_str'];
+             var ctx = document.getElementById(user_tweets_emotion);
+             var data_array = [];
+             var labels = [];
+             for (let key in user_tweets_analysis['emotion']) {
+                 data_array.push(parseFloat(user_tweets_analysis['emotion'][key]))
+                 labels.push(key)
+             }
+             var myChart = new Chart(ctx, {
+                 type: 'doughnut',
+                 data: {
+                     labels: labels,
+                     datasets: [{
+                         label: 'emotion',
+                         data: data_array,
+                         backgroundColor: [
+                             'rgba(203, 67, 53, 1)',
+                             'rgba(39, 174, 96, 1)',
+                             'rgba(52, 152, 219, 1)',
+                             'rgba(44, 62, 80, 1)'
+                         ]
+                     }]
+                 },
+                 options: {
+                     responsive: true,
+                     // maintainAspectRatio: false,
+                     legend: {
+                         display: true,
+                         position: 'right',
+                         labels: {
+                             fontColor: 'rgb(0,0,0)'
+                         },
+                         onClick: (e) => e.stopPropagation(),
+                     }
+                 }
+             });
+         }
     }
 
     add_collapsible();
