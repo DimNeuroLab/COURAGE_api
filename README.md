@@ -11,7 +11,7 @@ and features all implementations as well as server deployment requirements.
 ## Endpoints and routes
 There are several endpoints:
 
-[Documentation of the endpoints related to the Twitter demo](../app/webapp/endpoints_docu.md)
+[Documentation of the endpoints related to the Twitter demo](/app/webapp/endpoints_docu.md)
 
 ## General
 
