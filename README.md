@@ -11,6 +11,8 @@ and features all implementations as well as server deployment requirements.
 ## Endpoints and routes
 There are several endpoints:
 
+[Documentation of the endpoints related to the Twitter demo](../app/webapp/endpoints_docu.md)
+
 ## General
 
 | Endpoint | HTTP method | Requires auth? | Description                            | Returned data                                                       | Requested data format | 
@@ -30,8 +32,8 @@ There are several endpoints:
 
 ### Overview
 
-| Method      | EN  | IT | ES  | DE  |
-|-------------|:---:|:--:|:---:|:---:|
+| Method      | EN  | IT  | ES  | DE  |
+|-------------|:---:|:---:|:---:|:---:|
 | Sentiment   | `X` | `X` | `X` | `X` |
 | Emotion     | `X` | `X` | `X` | `-` |
 | Hate Speech | `X` | `X` | `-` | `P` |
