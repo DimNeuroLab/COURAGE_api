@@ -13,6 +13,7 @@ from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
 from courage_algorithms.ES_text_algorithms.emotion_ES import predict_emotion_es
 from courage_algorithms.DE_text_algorithms.toxicity_DE import get_ensemble_prediction_toxic_de
 from courage_algorithms.IT_text_algorithms.hate_speech_detection_IT_RUG import predict_hate_speech_it
+from crawler import *
 from courage_algorithms.scripts.path_setup import get_working_dir
 import json
 import base64
@@ -126,9 +127,9 @@ def analyze_twitter_data():
     """
     Run analysis algorithms on available tweets.
     """
-    analysis_results = {}
     try:
         for file in os.listdir(get_working_dir() + '/app/webapp/tweets'):
+            analysis_results = {}
             if file.endswith('json'):
                 print('processing file...', file)
 
@@ -145,6 +146,78 @@ def analyze_twitter_data():
 
                 with open(get_working_dir() + '/app/webapp/analysis_results/' + file, 'w') as json_file:
                     json.dump(analysis_results, json_file)
+
+        for folder in os.listdir(get_working_dir() + '/app/webapp/tweets_users'):
+            user_sentiment = {'negative': [], 'neutral': [], 'positive': []}
+            user_emotion = {'sadness': [], 'anger': [], 'joy': [], 'optimism': []}
+            for file in os.listdir(get_working_dir() + '/app/webapp/tweets_users/' + folder)[:10]:
+                if file.endswith('json'):
+                    print('processing user + file...', folder, file)
+
+                    with open(get_working_dir() + '/app/webapp/tweets_users/' + folder + '/' + file) as json_file:
+                        tweet_text = json.load(json_file)['text']
+
+                    neg, neu, pos = predict_sentiment_en(tweet_text)
+                    user_sentiment['negative'].append(neg)
+                    user_sentiment['neutral'].append(neu)
+                    user_sentiment['positive'].append(pos)
+
+                    emotion_results = predict_emotion_en(tweet_text)
+                    user_emotion['sadness'].append(emotion_results['sadness'])
+                    user_emotion['anger'].append(emotion_results['anger'])
+                    user_emotion['joy'].append(emotion_results['joy'])
+                    user_emotion['optimism'].append(emotion_results['optimism'])
+
+            user_sentiment = {key: sum(value) / len(value) for key, value in user_sentiment.items()}
+            user_emotion = {key: sum(value) / len(value) for key, value in user_emotion.items()}
+            analysis_results = {'sentiment': {}, 'emotion': {}}
+            sum_all_sentiment = sum([user_sentiment['negative'], user_sentiment['neutral'], user_sentiment['positive']])
+            analysis_results['sentiment']['negative'] = user_sentiment['negative'] / sum_all_sentiment
+            analysis_results['sentiment']['neutral'] = user_sentiment['neutral'] / sum_all_sentiment
+            analysis_results['sentiment']['positive'] = user_sentiment['positive'] / sum_all_sentiment
+            sum_all_emotion = sum([user_emotion['sadness'], user_emotion['anger'], user_emotion['joy'], user_emotion['optimism']])
+            analysis_results['emotion']['sadness'] = user_emotion['sadness'] / sum_all_emotion
+            analysis_results['emotion']['anger'] = user_emotion['anger'] / sum_all_emotion
+            analysis_results['emotion']['joy'] = user_emotion['joy'] / sum_all_emotion
+            analysis_results['emotion']['optimism'] = user_emotion['optimism'] / sum_all_emotion
+
+            with open(get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + folder + '.json', 'w') as json_file:
+                json.dump(analysis_results, json_file)
+        status_code = 200
+    except:
+        status_code = 444
+    res = {"status": 'SUCCESSFUL'}
+    return jsonify(res), status_code
+
+
+@api_blueprint.route("crawl_new_data/", methods=["GET"])
+def crawl_new_data():
+    """
+    Crawl new data for feed.
+    """
+    try:
+        stream = initialize_stream()
+
+        home_tweets = get_home_timeline_tweets(stream)
+        users = []
+        topics = []
+        for tweet in home_tweets:
+            topics += get_tweet_topic(tweet)
+            users.append(tweet['user']['id_str'])
+            save_home_tweet(tweet)
+
+        for topic in topics:
+            create_new_topic_folder(topic)
+            topic_tweets = search_tweets(stream, topic)
+            for topic_tweet in topic_tweets:
+                save_topic_tweet(topic_tweet, topic)
+
+        for user_id in users:
+            create_new_user_folder(user_id)
+            user_tweets = get_user_timeline_tweets(stream, user_id)
+            for user_tweet in user_tweets:
+                save_user_tweet(user_tweet, user_id)
+                
         status_code = 200
     except:
         status_code = 444
