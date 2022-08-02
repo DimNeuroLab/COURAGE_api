@@ -1,6 +1,7 @@
 import os
 import json
 from twython import Twython
+from datetime import datetime
 from courage_algorithms.scripts.path_setup import get_working_dir
 
 
@@ -19,6 +20,16 @@ def initialize_stream():
                      oauth_token_secret=AUTH_KEYS["oauth_token_secret"],
                      client_args={'timeout': 30})
     return stream
+
+
+def load_existing_home_timeline_tweets_with_date():
+    tweets = []
+    for file in os.listdir(get_working_dir() + '/app/webapp/tweets'):
+        if file.endswith('json'):
+            with open(get_working_dir() + '/app/webapp/tweets/' + file) as json_file:
+                tweet_data = json.load(json_file)
+            tweets.append((tweet_data['id_str'], datetime.strptime(tweet_data['created_at'], '%a %b %d %H:%M:%S +0000 %Y')))
+    return tweets
 
 
 def get_home_timeline_tweets(stream): # 20
@@ -85,3 +96,31 @@ def get_tweet_topic(tweet):
     for h in hashtags:
         hashtags_clean.append(h['text'].lower())
     return hashtags_clean
+
+
+def delete_home_timeline_dir():
+    dir_path = get_working_dir() + '/app/webapp/tweets'
+    for file in os.listdir(dir_path):
+        file_path = dir_path + '/' + file
+        os.remove(file_path)
+    dir_path = get_working_dir() + '/app/webapp/analysis_results'
+    for file in os.listdir(dir_path):
+        if file.endswith('json'):
+            file_path = dir_path + '/' + file
+            os.remove(file_path)
+
+
+def delete_topic_tweet_dir(topic):
+    dir_path = get_working_dir() + '/app/webapp/tweets_topics/' + topic
+    for file in os.listdir(dir_path):
+        file_path = dir_path + '/' + file
+        os.remove(file_path)
+
+
+def delete_user_tweet_dir(user_id):
+    dir_path = get_working_dir() + '/app/webapp/tweets_users/' + user_id
+    for file in os.listdir(dir_path):
+        file_path = dir_path + '/' + file
+        os.remove(file_path)
+    file_path = get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + user_id + '.json'
+    os.remove(file_path)

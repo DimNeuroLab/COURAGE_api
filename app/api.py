@@ -20,6 +20,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 import numpy as np
+import time
 
 
 # REST-Api
@@ -204,6 +205,10 @@ def crawl_new_data():
     """
     try:
         stream = initialize_stream()
+        stream_stats = {'users': 0,
+                        'topics': 0}
+
+        delete_home_timeline_dir()
 
         home_tweets = get_home_timeline_tweets(stream)
         users = []
@@ -213,17 +218,25 @@ def crawl_new_data():
             users.append(tweet['user']['id_str'])
             save_home_tweet(tweet)
 
+        topics = list(set(topics))
         for topic in topics:
+            # if stream_stats['topics'] * 15 >= 450:
+            #    print('sleeping for 15min to get new topics...')
+            #    time.sleep(901)
             create_new_topic_folder(topic)
+            delete_topic_tweet_dir(topic)
             topic_tweets = search_tweets(stream, topic)
             for topic_tweet in topic_tweets:
                 save_topic_tweet(topic_tweet, topic)
+            stream_stats['topics'] += 1
 
         for user_id in users:
             create_new_user_folder(user_id)
+            delete_user_tweet_dir(user_id)
             user_tweets = get_user_timeline_tweets(stream, user_id)
             for user_tweet in user_tweets:
                 save_user_tweet(user_tweet, user_id)
+            stream_stats['users'] += 1
                 
         status_code = 200
     except:
