@@ -58,7 +58,7 @@ async function loadUserTweetsAnalysis(user_id) {
 };
 
 
-async function loadTopicTweets(topic_name) {
+async function loadTopicTweets(topic_name, n) {
     var loaded_tweets = [];
     await $.ajax
     ({
@@ -66,7 +66,7 @@ async function loadTopicTweets(topic_name) {
         url: API_URL_PREFIX + "load_tweets_topic/",
         contentType: 'application/json',
         async: true,
-        data: JSON.stringify({'topic': topic_name}),
+        data: JSON.stringify({'topic': topic_name, 'n': n}),
         success: function (response) {
             loaded_tweets = response['tweets'];
         },
@@ -272,7 +272,25 @@ async function create_tweets() {
 
          s = '<div id="topic_tweets-' + tweet[0]['id_str'] + '" class="analysis-topic-tweets">';
          tweet_strings.push(s);
-         topic_tweets = await loadTopicTweets('covid');
+
+         var topic_tweets = [];
+         if (tweet[0]['entities']['hashtags'].length > 15) {
+            var topics = tweet[0]['entities']['hashtags'].slice(0, 15);
+            var topic_tweets = [];
+            for (let top of topics) {
+                var top_tweets = await loadTopicTweets(top, 1);
+                topic_tweets.push(top_tweets);
+            }
+         } else {
+            var num_tweets_per_topic = ~~(15/tweet[0]['entities']['hashtags'].length);
+            var topics = tweet[0]['entities']['hashtags'];
+            var topic_tweets = [];
+            for (let top of topics) {
+                var top_tweets = await loadTopicTweets(top, num_tweets_per_topic);
+                topic_tweets.push(top_tweets);
+            }
+         }
+
          if (topic_tweets.length == 0) {
             tweet_strings.push("<p class='topic-tweets-text'>We couldn't find any tweets with similar topic...</p>");
          } else {

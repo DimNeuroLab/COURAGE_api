@@ -106,6 +106,10 @@ def load_tweets_topic():
         # no text posted
         status_code = 400
         return status_code
+    if 'n' in data:
+        num_tweets = data['n']
+    else:
+        num_tweets = None
     try:
         folder_path = get_working_dir() + '/app/webapp/tweets_topics/' + topic
         tweet_list = []
@@ -115,7 +119,10 @@ def load_tweets_topic():
                     with open(folder_path + '/' + file) as json_file:
                         tweet_list.append(json.load(json_file))
         status_code = 200
-        res = {"tweets": tweet_list}
+        if num_tweets:
+            res = {"tweets": tweet_list[:num_tweets]}
+        else:
+            res = {"tweets": tweet_list}
     except:
         status_code = 444
         res = {"tweets": []}
