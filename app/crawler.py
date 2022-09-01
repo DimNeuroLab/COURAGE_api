@@ -50,8 +50,8 @@ def get_user_timeline_tweets(stream, user_id): # 20
     return timeline_tweets
 
 
-def search_tweets(stream, search_query): # 15
-    matching_tweets = stream.search(q=search_query, lang='en', tweet_mode='extended')
+def search_tweets(stream, search_query, language='en', num_tweets=15): # 15
+    matching_tweets = stream.search(q=search_query, lang=language, tweet_mode='extended', count=num_tweets)
     matching_tweets = matching_tweets['statuses']
     if len(matching_tweets) > 0:
         for idx, tweet in enumerate(matching_tweets):
