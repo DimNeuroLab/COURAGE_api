@@ -24,6 +24,10 @@ async function load_algorithm_samples() {
     // load sentiment info
     var en_sentiment_out = await getData('EN_sentiment_out.tsv');
     var en_sentiment_strings = [];
+    var s = '<p><a href="https://huggingface.co/finiteautomata/bertweet-base-sentiment-analysis">[MODEL]</a>';
+    en_sentiment_strings.push(s);
+    var s = '<a href="https://www.dropbox.com/s/byzr8yoda6bua1b/2017_English_final.zip?file_subpath=%2F2017_English_final%2FGOLD">[DATASET]</a></p>';
+    en_sentiment_strings.push(s);
     var s = '<table><tr><th>Sample</th><th>Prediction</th><th>True</th></tr>';
     en_sentiment_strings.push(s);
     for (let prediction of en_sentiment_out) {
@@ -47,6 +51,10 @@ async function load_algorithm_samples() {
     // load emotion info
     var en_emotion_out = await getData('EN_emotion_out.tsv');
     var en_emotion_strings = [];
+    var s = '<p><a href="https://huggingface.co/cardiffnlp/twitter-roberta-base-emotion">[MODEL]</a>';
+    en_emotion_strings.push(s);
+    var s = '<a href="https://github.com/cardiffnlp/tweeteval">[DATASET]</a></p>';
+    en_emotion_strings.push(s);
     var s = '<table><tr><th>Sample</th><th>Prediction</th><th>True</th></tr>';
     en_emotion_strings.push(s);
     for (let prediction of en_emotion_out) {
@@ -67,9 +75,13 @@ async function load_algorithm_samples() {
     }
     document.getElementById("EN_emotion_output").innerHTML = final_string;
 
-    // prediction hate speech out
+    // load hate speech info
     var en_hate_out = await getData('EN_hate_speech_out.tsv');
     var en_hate_speech_strings = [];
+    var s = '<p><a href="https://huggingface.co/pysentimiento/bertweet-hate-speech">[MODEL]</a>';
+    en_hate_speech_strings.push(s);
+    var s = '<a href="https://aclanthology.org/S19-2007.pdf">[DATASET]</a></p>';
+    en_hate_speech_strings.push(s);
     var s = '<table><tr><th>Sample</th><th>Prediction Hate Speech</th><th>True Hate Speech</th>' +
             '<th>Prediction Targeted</th><th>True Targeted</th>' +
             '<th>Prediction Aggressive</th><th>True Aggressive</th></tr>';
@@ -107,4 +119,89 @@ async function load_algorithm_samples() {
         final_string = final_string + table_line;
     }
     document.getElementById("EN_hate_speech_output").innerHTML = final_string;
+
+    // load sentiment info IT
+    var it_sentiment_out = await getData('IT_sentiment_out.tsv');
+    var it_sentiment_strings = [];
+    var s = '<p><a href="https://huggingface.co/MilaNLProc/feel-it-italian-sentiment">[MODEL]</a>';
+    it_sentiment_strings.push(s);
+    var s = '<a href="https://aclanthology.org/2021.wassa-1.8/">[DATASET]</a></p>';
+    it_sentiment_strings.push(s);
+    var s = '<table><tr><th>Campione</th><th>Predizione</th><th>Corretto</th></tr>';
+    it_sentiment_strings.push(s);
+    for (let prediction of it_sentiment_out) {
+        if (prediction[1] == prediction[2]) {
+            s = '<tr><td>' + prediction[0] + '</td><td style="color: green;">' + prediction[1] + '</td><td style="color: green;">' +
+             prediction[2] + '</td></tr>';
+        } else {
+            s = '<tr><td>' + prediction[0] + '</td><td style="color: red;">' + prediction[1] + '</td><td style="color: red;">' +
+             prediction[2] + '</td></tr>';
+        }
+        it_sentiment_strings.push(s);
+    }
+    var s = '</table>';
+    it_sentiment_strings.push(s);
+    var final_string = "";
+    for (let table_line of it_sentiment_strings) {
+        final_string = final_string + table_line;
+    }
+    document.getElementById("IT_sentiment_output").innerHTML = final_string;
+
+    // load emotion info IT
+    var it_emotion_out = await getData('IT_emotion_out.tsv');
+    var it_emotion_strings = [];
+    var s = '<p><a href="https://huggingface.co/MilaNLProc/feel-it-italian-emotion">[MODEL]</a>';
+    it_emotion_strings.push(s);
+    var s = '<a href="https://aclanthology.org/2021.wassa-1.8/">[DATASET]</a></p>';
+    it_emotion_strings.push(s);
+    var s = '<table><tr><th>Campione</th><th>Predizione</th><th>Corretto</th></tr>';
+    it_emotion_strings.push(s);
+    for (let prediction of it_emotion_out) {
+        if (prediction[1] == prediction[2]) {
+            s = '<tr><td>' + prediction[0] + '</td><td style="color: green;">' + prediction[1] + '</td><td style="color: green;">' +
+             prediction[2] + '</td></tr>';
+        } else {
+            s = '<tr><td>' + prediction[0] + '</td><td style="color: red;">' + prediction[1] + '</td><td style="color: red;">' +
+             prediction[2] + '</td></tr>';
+        }
+        it_emotion_strings.push(s);
+    }
+    var s = '</table>';
+    it_emotion_strings.push(s);
+    var final_string = "";
+    for (let table_line of it_emotion_strings) {
+        final_string = final_string + table_line;
+    }
+    document.getElementById("IT_emotion_output").innerHTML = final_string;
+
+    // load hate speech info IT
+    var it_hate_out = await getData('IT_hate_speech_out.tsv');
+    var it_hate_speech_strings = [];
+    // var s = '<p><a href="https://huggingface.co/pysentimiento/bertweet-hate-speech">[MODEL]</a>';
+    // en_hate_speech_strings.push(s);
+    // var s = '<a href="https://aclanthology.org/S19-2007.pdf">[DATASET]</a></p>';
+    // en_hate_speech_strings.push(s);
+    var s = '<table><tr><th>Campione</th><th>Predizione</th><th>Corretto</th></tr>';
+    it_hate_speech_strings.push(s);
+    var label_dict = {0: 'false', 1: 'true'};
+    for (let prediction of it_hate_out) {
+        s = '<tr><td>' + prediction[0] + '</td>';
+        it_hate_speech_strings.push(s);
+
+        if (label_dict[prediction[1]] == label_dict[prediction[2]]) {
+            s = '<td style="color: green;">' + label_dict[prediction[1]] + '</td><td style="color: green;">' + label_dict[prediction[2]] +'</td>';
+        } else {
+            s = '<td style="color: red;">' + label_dict[prediction[1]] + '</td><td style="color: red;">' + label_dict[prediction[2]] +'</td>';
+        }
+        it_hate_speech_strings.push(s);
+        s= '</tr>';
+        it_hate_speech_strings.push(s);
+    }
+    var s = '</table>';
+    it_hate_speech_strings.push(s);
+    var final_string = "";
+    for (let table_line of it_hate_speech_strings) {
+        final_string = final_string + table_line;
+    }
+    document.getElementById("IT_hate_speech_output").innerHTML = final_string;
 }

@@ -16,23 +16,54 @@
         algorithms were trained on. The current overview page includes examples
         for English sentiment, English emotion and English hate speech models.</p>
 
-    <h3>English Sentiment <a href="https://huggingface.co/finiteautomata/bertweet-base-sentiment-analysis">[MODEL]</a>
-    <a href="https://www.dropbox.com/s/byzr8yoda6bua1b/2017_English_final.zip?file_subpath=%2F2017_English_final%2FGOLD">[DATASET]</a></h3>
-
+    <button class="collapsible"><b>English Sentiment</b></button>
     <div class="algo_table" id="EN_sentiment_output">
     </div>
 
-    <h3>English Emotion <a href="https://huggingface.co/cardiffnlp/twitter-roberta-base-emotion">[MODEL]</a>
-    <a href="https://github.com/cardiffnlp/tweeteval">[DATASET]</a></h3>
-
+    <button class="collapsible"><b>English Emotion</b></button>
     <div class="algo_table" id="EN_emotion_output">
     </div>
 
-    <h3>English Hate Speech <a href="https://huggingface.co/pysentimiento/bertweet-hate-speech">[MODEL]</a>
-    <a href="https://aclanthology.org/S19-2007.pdf">[DATASET]</a></h3>
-
+    <button class="collapsible"><b>English Hate Speech</b></button>
     <div class="algo_table" id="EN_hate_speech_output">
     </div>
 
+    <h1>Panoramica delle previsioni degli algoritmi italiani</h1>
+
+    <p>In questa pagina forniamo una panoramica delle previsioni generate con algoritmi che sono stati utilizzati
+        all'interno della demo dell'API (principalmente demo su Twitter). Alcuni esempi dimostrano che gli algoritmi
+        non funzionano perfettamente e quindi possono aiutare a comprendere i limiti di tali strumenti. I dati campione
+        sono presi dai rispettivi set di test su cui sono stati addestrati gli algoritmi. L'attuale pagina di panoramica
+        include esempi di sentimenti italiani, emozioni italiane e modelli di incitamento all'odio italiano.</p>
+
+    <button class="collapsible"><b>Sentimento Italiano</b></button>
+    <div class="algo_table" id="IT_sentiment_output">
+    </div>
+
+    <button class="collapsible"><b>Emozione Italiana</b></button>
+    <div class="algo_table" id="IT_emotion_output">
+    </div>
+
+    <button class="collapsible"><b>Incitamento all'odio Italiano</b></button>
+    <div class="algo_table" id="IT_hate_speech_output">
+    </div>
+
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+              content.style.maxHeight = null;
+            } else {
+              content.style.maxHeight = content.scrollHeight + "px";
+            }
+          });
+        }
+    </script>
 </body>
 </html>
