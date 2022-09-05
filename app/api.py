@@ -20,6 +20,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 import numpy as np
+import random
 import time
 
 
@@ -295,6 +296,60 @@ def load_user_tweets_analysis():
         analysis_results = {}
         status_code = 444
     return jsonify(analysis_results), status_code
+
+
+@api_blueprint.route("load_topic_data_IT/", methods=["POST"])
+def load_topic_data_IT():
+    """
+    Load tweets on specific topic for Italian demo page.
+    """
+    data = request.json
+    if 'topic' in data:
+        topic = data['topic']
+        n = data['n']
+    else:
+        # no topic posted
+        status_code = 400
+        return status_code
+    try:
+        with open(get_working_dir() + '/app/webapp/italian_demo/data/topics/' + topic + '.json') as json_file:
+            tweet_data = json.load(json_file)
+        if n > 0:
+            idc = random.sample(range(len(tweet_data['tweets'])), n)
+            tweet_results = {'tweets': [], 'analysis': []}
+            for idx in idc:
+                tweet_results['tweets'].append(tweet_data['tweets'][idx])
+                tweet_results['analysis'].append(tweet_data['analysis'][idx])
+            status_code = 200
+            return jsonify(tweet_results), status_code
+        else:
+            status_code = 200
+            return jsonify(tweet_data), status_code
+    except:
+        status_code = 444
+        return status_code
+
+
+@api_blueprint.route("load_user_data_IT/", methods=["POST"])
+def load_user_data_IT():
+    """
+    Load tweets of specific user for Italian demo page.
+    """
+    data = request.json
+    if 'user_id' in data:
+        user_id = data['user_id']
+    else:
+        # no user id posted
+        status_code = 400
+        return status_code
+    try:
+        with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + user_id + '.json') as json_file:
+            tweet_data = json.load(json_file)
+        status_code = 200
+        return jsonify(tweet_data), status_code
+    except:
+        status_code = 444
+        return status_code
 
 
 ################################################################################################################

@@ -22,6 +22,12 @@ def show_twitter_demo():
     return render_template("twitter_demo.html")
 
 
+@web_blueprint.route("/twitter_demo_it", methods=["GET"])
+def show_italian_twitter_demo():
+    """returns the twitter demo page"""
+    return render_template("/italian_demo/italian_twitter_demo.html")
+
+
 @web_blueprint.route("/algorithm_info", methods=["GET"])
 def show_algorithm_info():
     """returns the algorithm info page"""
