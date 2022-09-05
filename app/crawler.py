@@ -41,8 +41,8 @@ def get_home_timeline_tweets(stream): # 20
     return home_timeline_tweets
 
 
-def get_user_timeline_tweets(stream, user_id): # 20
-    timeline_tweets = stream.get_user_timeline(user_id=user_id, tweet_mode='extended')
+def get_user_timeline_tweets(stream, user_id, n=10): # 20
+    timeline_tweets = stream.get_user_timeline(user_id=user_id, tweet_mode='extended', count=n)
     if len(timeline_tweets) > 0:
         for idx, tweet in enumerate(timeline_tweets):
             tweet['text'] = tweet['full_text']
@@ -124,3 +124,17 @@ def delete_user_tweet_dir(user_id):
         os.remove(file_path)
     file_path = get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + user_id + '.json'
     os.remove(file_path)
+
+
+def save_topic_tweets_italian(tweet_list, topic):
+    file_path = get_working_dir() + '/app/webapp/italian_demo/data/topics/' + topic + '.json'
+    file_content = {'tweets': tweet_list, 'analysis': []}
+    with open(file_path, 'w') as fp:
+        json.dump(file_content, fp)
+
+
+def save_user_tweets_italian(tweet_list, user_id):
+    file_path = get_working_dir() + '/app/webapp/italian_demo/data/users/' + user_id + '.json'
+    file_content = {'tweets': tweet_list, 'analysis': []}
+    with open(file_path, 'w') as fp:
+        json.dump(file_content, fp)

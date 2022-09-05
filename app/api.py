@@ -352,6 +352,51 @@ def load_user_data_IT():
         return status_code
 
 
+@api_blueprint.route("crawl_new_data_IT/", methods=["POST"])
+def crawl_new_data_IT():
+    """
+    Crawl new data for Twitter demo.
+    """
+    data = request.json
+    if 'topics' in data:
+        topics = data['topics']
+    else:
+        # no topics posted
+        status_code = 400
+        return status_code
+    try:
+        stream = initialize_stream()
+        stream_stats = {'users': 0,
+                        'topics': 0}
+        users = []
+        for topic in topics:
+            if stream_stats['topics'] * 15 >= 166:
+                print('sleeping for 15min to get new topics...')
+                time.sleep(901)
+                stream_stats['topics'] = 0
+            topic_tweets = search_tweets(stream, topic, language='it')
+            for t in topic_tweets:
+                users.append(t['user']['id_str'])
+            save_topic_tweets_italian(topic_tweets, topic)
+            stream_stats['topics'] += 1
+
+        for user_id in users:
+            if stream_stats['users'] * 10 >= 891:
+                print('sleeping for 15min to get new users...')
+                time.sleep(901)
+                stream_stats['users'] = 0
+            user_tweets = get_user_timeline_tweets(stream, user_id)
+            save_user_tweets_italian(user_tweets, user_id)
+            stream_stats['users'] += 1
+
+        status_code = 200
+        res = {"status": 'SUCCESSFUL'}
+    except:
+        status_code = 444
+        res = {"status": 'ERROR'}
+    return jsonify(res), status_code
+
+
 ################################################################################################################
 # IMAGES
 ################################################################################################################
