@@ -156,3 +156,8 @@ cython_debug/
 /courage_algorithms/embeddings/
 /courage_algorithms/models/
 /courage_algorithms/resources/
+/app/webapp/tweets/
+/app/webapp/tweets_topics/
+/app/webapp/tweets_users/
+/app/webapp/analysis_results/
+/app/webapp/twitter_keys.json
