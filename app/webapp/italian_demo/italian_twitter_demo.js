@@ -300,16 +300,20 @@ async function create_tweets(topic='covid') {
             var topics = tweet['entities']['hashtags'].slice(0, 15);
             var topic_tweets = [];
             for (let top of topics) {
-                var top_tweets = await getTweetDataIT(top, 1);
-                topic_tweets.push(top_tweets['tweets']);
+                var top_tweets = await getTweetDataIT(top['text'], 1);
+                for (let tt of top_tweets['tweets']) {
+                    topic_tweets.push(tt);
+                }
             }
          } else {
             var num_tweets_per_topic = ~~(15/tweet['entities']['hashtags'].length);
             var topics = tweet['entities']['hashtags'];
             var topic_tweets = [];
             for (let top of topics) {
-                var top_tweets = await getTweetDataIT(top, num_tweets_per_topic);
-                topic_tweets.push(top_tweets['tweets']);
+                var top_tweets = await getTweetDataIT(top['text'], num_tweets_per_topic);
+                for (let tt of top_tweets['tweets']) {
+                    topic_tweets.push(tt);
+                }
             }
          }
 

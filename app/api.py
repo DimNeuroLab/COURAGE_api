@@ -305,12 +305,19 @@ def load_topic_data_IT():
     """
     data = request.json
     if 'topic' in data:
-        topic = data['topic']
-        n = data['n']
+        topic = data['topic'].lower()
+        n = int(data['n'])
+        print(topic, n)
     else:
         # no topic posted
         status_code = 400
         return status_code
+    topics_available = [topic_name.split('.')[0] for topic_name in os.listdir(get_working_dir() + '/app/webapp/italian_demo/data/topics/')
+                        if topic_name.endswith('json')]
+    if topic not in topics_available:
+        status_code = 200
+        tweet_results = {'tweets': [], 'analysis': []}
+        return jsonify(tweet_results), status_code
     try:
         with open(get_working_dir() + '/app/webapp/italian_demo/data/topics/' + topic + '.json') as json_file:
             tweet_data = json.load(json_file)

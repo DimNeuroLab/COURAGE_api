@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <!-- credit: https://github.com/somanath-goudar/html-css-projects -->
 </head>
-<body onload="create_tweets()">
+<body onload="create_tweets('covid19')">
     <div class="sidebar">
       <i class="fab fa-twitter"></i>
       <div class="sidebarOption active">
@@ -92,20 +92,22 @@
       <div class="widgets__widgetContainer">
           <h2>Tendenze per te</h2>
           <div class="topic-link">
-              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-1</a></b>
+              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid19')">covid19</a></b>
           </div>
           <div class="topic-link">
-              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-2</a></b>
+              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('elezioni')">elezioni</a></b>
           </div>
           <div class="topic-link">
-              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-3</a></b>
+              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('immigrati')">immigrati</a></b>
           </div>
           <div class="topic-link">
-              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-4</a></b>
+              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('trap music')">trap music</a></b>
           </div>
+          <!--
           <div class="topic-link">
               <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-5</a></b>
           </div>
+          -->
       </div>
 
       <div class="widgets__widgetContainer">
