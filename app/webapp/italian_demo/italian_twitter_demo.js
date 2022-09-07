@@ -353,7 +353,6 @@ async function create_tweets(topic='covid') {
                      data: data_array,
                      backgroundColor: [
                          'rgba(203, 67, 53, 1)',
-                         'rgba(244, 208, 63, 1)',
                          'rgba(39, 174, 96, 1)'
                      ]
                  }]
@@ -389,9 +388,9 @@ async function create_tweets(topic='covid') {
                      data: data_array,
                      backgroundColor: [
                          'rgba(203, 67, 53, 1)',
+                         'rgba(0, 0, 153, 1)',
                          'rgba(39, 174, 96, 1)',
-                         'rgba(52, 152, 219, 1)',
-                         'rgba(44, 62, 80, 1)'
+                         'rgba(0, 0, 0, 1)'
                      ]
                  }]
              },
@@ -425,9 +424,8 @@ async function create_tweets(topic='covid') {
                      label: 'hate speech',
                      data: data_array,
                      backgroundColor: [
-                         'rgba(203, 67, 53, 1)',
-                         'rgba(203, 67, 53, 1)',
-                         'rgba(203, 67, 53, 1)'
+                        'rgba(203, 67, 53, 1)',
+                        'rgba(203, 67, 53, 1)'
                      ]
                  }]
              },
@@ -473,9 +471,8 @@ async function create_tweets(topic='covid') {
                          label: 'sentiment',
                          data: data_array,
                          backgroundColor: [
-                             'rgba(203, 67, 53, 1)',
-                             'rgba(244, 208, 63, 1)',
-                             'rgba(39, 174, 96, 1)'
+                            'rgba(203, 67, 53, 1)',
+                            'rgba(39, 174, 96, 1)'
                          ]
                      }]
                  },
@@ -509,10 +506,10 @@ async function create_tweets(topic='covid') {
                          label: 'emotion',
                          data: data_array,
                          backgroundColor: [
-                             'rgba(203, 67, 53, 1)',
-                             'rgba(39, 174, 96, 1)',
-                             'rgba(52, 152, 219, 1)',
-                             'rgba(44, 62, 80, 1)'
+                            'rgba(203, 67, 53, 1)',
+                            'rgba(0, 0, 153, 1)',
+                            'rgba(39, 174, 96, 1)',
+                            'rgba(0, 0, 0, 1)'
                          ]
                      }]
                  },
