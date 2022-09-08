@@ -436,31 +436,32 @@ def analyze_twitter_data_IT():
                 with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + file, 'r') as json_file_input:
                     user_content = json.load(json_file_input)
                 user_content['analysis'] = []
-                for tweet in user_content['tweets']:
-                    tweet_text = tweet['text']
-                    neg, pos = predict_sentiment_it(tweet_text)
-                    user_sentiment['negative'].append(neg)
-                    user_sentiment['positive'].append(pos)
-                    emotion_results = predict_emotion_it(tweet_text)
-                    user_emotion['anger'].append(emotion_results['anger'])
-                    user_emotion['fear'].append(emotion_results['fear'])
-                    user_emotion['joy'].append(emotion_results['joy'])
-                    user_emotion['sadness'].append(emotion_results['sadness'])
-                user_sentiment = {key: sum(value) / len(value) for key, value in user_sentiment.items()}
-                user_emotion = {key: sum(value) / len(value) for key, value in user_emotion.items()}
-                analysis_results = {'sentiment': {}, 'emotion': {}}
-                sum_all_sentiment = sum([user_sentiment['negative'], user_sentiment['positive']])
-                analysis_results['sentiment']['negative'] = user_sentiment['negative'] / sum_all_sentiment
-                analysis_results['sentiment']['positive'] = user_sentiment['positive'] / sum_all_sentiment
-                sum_all_emotion = sum(
-                    [user_emotion['anger'], user_emotion['fear'], user_emotion['joy'], user_emotion['sadness']])
-                analysis_results['emotion']['anger'] = user_emotion['anger'] / sum_all_emotion
-                analysis_results['emotion']['fear'] = user_emotion['fear'] / sum_all_emotion
-                analysis_results['emotion']['joy'] = user_emotion['joy'] / sum_all_emotion
-                analysis_results['emotion']['sadness'] = user_emotion['sadness'] / sum_all_emotion
-                user_content['analysis'].append(analysis_results)
-            with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + file, 'w') as json_file_output:
-                json.dump(user_content, json_file_output)
+                if len(user_content['tweets']) > 0:
+                    for tweet in user_content['tweets']:
+                        tweet_text = tweet['text']
+                        neg, pos = predict_sentiment_it(tweet_text)
+                        user_sentiment['negative'].append(neg)
+                        user_sentiment['positive'].append(pos)
+                        emotion_results = predict_emotion_it(tweet_text)
+                        user_emotion['anger'].append(emotion_results['anger'])
+                        user_emotion['fear'].append(emotion_results['fear'])
+                        user_emotion['joy'].append(emotion_results['joy'])
+                        user_emotion['sadness'].append(emotion_results['sadness'])
+                    user_sentiment = {key: sum(value) / len(value) for key, value in user_sentiment.items()}
+                    user_emotion = {key: sum(value) / len(value) for key, value in user_emotion.items()}
+                    analysis_results = {'sentiment': {}, 'emotion': {}}
+                    sum_all_sentiment = sum([user_sentiment['negative'], user_sentiment['positive']])
+                    analysis_results['sentiment']['negative'] = user_sentiment['negative'] / sum_all_sentiment
+                    analysis_results['sentiment']['positive'] = user_sentiment['positive'] / sum_all_sentiment
+                    sum_all_emotion = sum(
+                        [user_emotion['anger'], user_emotion['fear'], user_emotion['joy'], user_emotion['sadness']])
+                    analysis_results['emotion']['anger'] = user_emotion['anger'] / sum_all_emotion
+                    analysis_results['emotion']['fear'] = user_emotion['fear'] / sum_all_emotion
+                    analysis_results['emotion']['joy'] = user_emotion['joy'] / sum_all_emotion
+                    analysis_results['emotion']['sadness'] = user_emotion['sadness'] / sum_all_emotion
+                    user_content['analysis'].append(analysis_results)
+                with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + file, 'w') as json_file_output:
+                    json.dump(user_content, json_file_output)
         status_code = 200
         res = {"status": 'SUCCESSFUL'}
     except:

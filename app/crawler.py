@@ -42,7 +42,7 @@ def get_home_timeline_tweets(stream): # 20
 
 
 def get_user_timeline_tweets(stream, user_id, n=10): # 20
-    timeline_tweets = stream.get_user_timeline(user_id=user_id, tweet_mode='extended', count=n)
+    timeline_tweets = stream.get_user_timeline(user_id=user_id, tweet_mode='extended', count=n, exclude_replies=True)
     if len(timeline_tweets) > 0:
         for idx, tweet in enumerate(timeline_tweets):
             tweet['text'] = tweet['full_text']
