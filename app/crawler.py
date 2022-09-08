@@ -51,6 +51,7 @@ def get_user_timeline_tweets(stream, user_id, n=10): # 20
 
 
 def search_tweets(stream, search_query, language='en', num_tweets=15): # 15
+    search_query += ' -RT'
     matching_tweets = stream.search(q=search_query, lang=language, tweet_mode='extended', count=num_tweets)
     matching_tweets = matching_tweets['statuses']
     if len(matching_tweets) > 0:

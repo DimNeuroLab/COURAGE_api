@@ -307,7 +307,6 @@ def load_topic_data_IT():
     if 'topic' in data:
         topic = data['topic'].lower()
         n = int(data['n'])
-        print(topic, n)
     else:
         # no topic posted
         status_code = 400
