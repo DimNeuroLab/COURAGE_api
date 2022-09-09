@@ -278,16 +278,16 @@ async function create_tweets() {
             var topics = tweet[0]['entities']['hashtags'].slice(0, 15);
             var topic_tweets = [];
             for (let top of topics) {
-                var top_tweets = await loadTopicTweets(top, 1);
-                topic_tweets.push(top_tweets);
+                var top_tweets = await loadTopicTweets(top['text'], 1);
+                topic_tweets = topic_tweets.concat(top_tweets);
             }
          } else {
             var num_tweets_per_topic = ~~(15/tweet[0]['entities']['hashtags'].length);
             var topics = tweet[0]['entities']['hashtags'];
             var topic_tweets = [];
             for (let top of topics) {
-                var top_tweets = await loadTopicTweets(top, num_tweets_per_topic);
-                topic_tweets.push(top_tweets);
+                var top_tweets = await loadTopicTweets(top['text'], num_tweets_per_topic);
+                topic_tweets = topic_tweets.concat(top_tweets);
             }
          }
 

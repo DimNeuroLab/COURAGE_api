@@ -128,7 +128,7 @@ def load_tweets_topic():
     except:
         status_code = 444
         res = {"tweets": []}
-    return res, status_code
+    return jsonify(res), status_code
 
 
 @api_blueprint.route("analyze_twitter_data/", methods=["GET"])
