@@ -33,6 +33,7 @@ setup(
         "torch==1.11.0",
         "transformers==4.17.0",
         "Werkzeug==2.0.3",
+        "gensim==3.8.3",
         "pytest",
     ],
 )
