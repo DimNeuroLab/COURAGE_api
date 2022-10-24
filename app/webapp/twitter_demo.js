@@ -259,6 +259,10 @@ async function create_tweets() {
          if (user_tweets.length == 0) {
             tweet_strings.push("<p class='user-tweets-text'>This user hasn't posted anything else yet...</p>");
          } else {
+            //tweet_strings.push('<p class="user-tweets-text" id="user-tweets-filter-bubble-' +
+            //                   tweet[0]['id_str'] + '"></p>');
+            tweet_strings.push('<div id="user-tweets-filter-bubble-' +
+                               tweet[0]['id_str'] + '"></div>');
             for (let u_tweet of user_tweets) {
                 tweet_strings.push('<p class="user-tweets-text">' + u_tweet['text'] + '</p>');
             }
@@ -435,6 +439,22 @@ async function create_tweets() {
          var user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
          if (user_tweets.length > 0) {
              var user_tweets_analysis = await loadUserTweetsAnalysis(tweet[0]['user']['id_str']);
+
+             var user_tweets_filter_bubble = 'user-tweets-filter-bubble-' + tweet[0]['id_str'];
+             var user_tweets_filter_bubble_sec = document.getElementById(user_tweets_filter_bubble);
+             if (user_tweets_analysis['filter_bubble']['topic'] == 'none') {
+                document.getElementById(user_tweets_filter_bubble).innerHTML = '<p class="user-tweets-text" ' +
+                'style="background-color:green;color:white;"><b>' +
+                'This user seems not to be located in a filter bubble.' +
+                '</b></p>';
+             } else {
+                document.getElementById(user_tweets_filter_bubble).innerHTML = '<p class="user-tweets-text" ' +
+                'style="background-color:red;color:white;"><b>' +
+                'This user might be located in a filter bubble, as she/he posts mainly ' +
+                user_tweets_analysis['filter_bubble']['sentiment'] +
+                ' content about ' + user_tweets_analysis['filter_bubble']['topic'] + '.</b></p>';
+             }
+
              var user_tweets_sent = 'user-tweets-sentiment-canvas-' + tweet[0]['id_str'];
              var ctx = document.getElementById(user_tweets_sent);
              var data_array = [];
