@@ -19,7 +19,6 @@ def predict_topic_en(sentence):
     model = load_model()
 
     inputs = tokenizer(sentence, return_tensors="pt")
-    class_mapping = model.config.id2label
 
     outputs = model(**inputs)
     logits = outputs['logits']
