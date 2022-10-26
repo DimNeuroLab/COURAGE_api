@@ -189,6 +189,7 @@ def analyze_twitter_data():
             topic_dict = {}
             sum_topics = 0
             for idx, value in enumerate(user_topics):
+                sum_topics += 1
                 for t in value:
                     if t not in list(topic_dict.keys()):
                         topic_dict[t] = {}
@@ -197,7 +198,6 @@ def analyze_twitter_data():
                         topic_dict[t]['neu'] = 0
                         topic_dict[t]['pos'] = 0
                     topic_dict[t]['counts'] = topic_dict[t]['counts'] + 1
-                    sum_topics += 1
                     if user_sentiment['negative'][idx] >= 0.33:
                         topic_dict[t]['neg'] = topic_dict[t]['neg'] + 1
                     if user_sentiment['neutral'][idx] >= 0.33:
