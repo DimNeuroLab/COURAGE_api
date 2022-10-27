@@ -29,7 +29,7 @@ def predict_emotion_en(sentence):
     proba = torch.softmax(logits, dim=0)
     proba = np.array(proba.detach().numpy())
 
-    label_names = ['joy', 'optimism', 'anger', 'sadness']
+    label_names = ['anger', 'joy', 'optimism', 'sadness']
     ranking = np.argsort(proba)
     ranking = ranking[::-1]
     output = {}
