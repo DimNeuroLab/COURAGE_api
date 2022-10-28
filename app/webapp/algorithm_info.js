@@ -20,6 +20,49 @@ async function getData(file_name) {
 };
 
 
+async function loadCfMatrix(file_name) {
+    var table = [];
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX  + "load_algorithm_results/",
+        contentType: "application/json",
+        data: JSON.stringify({"file_name": file_name}),
+        success: function (response) {
+            cf_data = JSON.parse(response)['predictions'];
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+
+    var labels = cf_data[0];
+    var cf_data = cf_data.slice(1);
+
+    table.push('<table><tr><td></td>');
+    for (let label of labels) {
+        table.push('<th>' + label + '</th>');
+    }
+    table.push('</tr>');
+
+    for (var i = 0; i < cf_data.length; i++) {
+        var cf_row = cf_data[i];
+        var s = '<tr><th>' + labels[i] + '</th>';
+        table.push(s);
+        for (let value of cf_row) {
+            table.push('<td>' + value + '</td>');
+        }
+        table.push('</tr>');
+    }
+    table.push('</table>');
+    var final_table = "";
+    for (let table_line of table) {
+        final_table = final_table + table_line;
+    }
+    return final_table;
+};
+
+
 async function load_algorithm_samples() {
     // load sentiment info
     var en_sentiment_out = await getData('EN_sentiment_out.tsv');
@@ -28,6 +71,11 @@ async function load_algorithm_samples() {
     en_sentiment_strings.push(s);
     var s = '<a href="https://www.dropbox.com/s/byzr8yoda6bua1b/2017_English_final.zip?file_subpath=%2F2017_English_final%2FGOLD">[DATASET]</a></p>';
     en_sentiment_strings.push(s);
+
+    var en_sentiment_cf = await loadCfMatrix('EN_sentiment_cf.tsv');
+    en_sentiment_strings.push(en_sentiment_cf);
+    en_sentiment_strings.push('<br>');
+
     var s = '<table><tr><th>Sample</th><th>Prediction</th><th>True</th></tr>';
     en_sentiment_strings.push(s);
     for (let prediction of en_sentiment_out) {
@@ -55,6 +103,11 @@ async function load_algorithm_samples() {
     en_emotion_strings.push(s);
     var s = '<a href="https://github.com/cardiffnlp/tweeteval">[DATASET]</a></p>';
     en_emotion_strings.push(s);
+
+    var en_emotion_cf = await loadCfMatrix('EN_emotion_cf.tsv');
+    en_emotion_strings.push(en_emotion_cf);
+    en_emotion_strings.push('<br>');
+
     var s = '<table><tr><th>Sample</th><th>Prediction</th><th>True</th></tr>';
     en_emotion_strings.push(s);
     for (let prediction of en_emotion_out) {
@@ -82,6 +135,20 @@ async function load_algorithm_samples() {
     en_hate_speech_strings.push(s);
     var s = '<a href="https://aclanthology.org/S19-2007.pdf">[DATASET]</a></p>';
     en_hate_speech_strings.push(s);
+
+    en_hate_speech_strings.push('<h3>Confusion Matrix Hate</h3>');
+    var en_hate_cf = await loadCfMatrix('EN_hate_cf.tsv');
+    en_hate_speech_strings.push(en_hate_cf);
+    en_hate_speech_strings.push('<br>');
+    en_hate_speech_strings.push('<h3>Confusion Matrix Targeted</h3>');
+    var en_targeted_cf = await loadCfMatrix('EN_targeted_cf.tsv');
+    en_hate_speech_strings.push(en_targeted_cf);
+    en_hate_speech_strings.push('<br>');
+    en_hate_speech_strings.push('<h3>Confusion Matrix Aggressive</h3>');
+    var en_aggressive_cf = await loadCfMatrix('EN_aggressive_cf.tsv');
+    en_hate_speech_strings.push(en_aggressive_cf);
+    en_hate_speech_strings.push('<br>');
+
     var s = '<table><tr><th>Sample</th><th>Prediction Hate Speech</th><th>True Hate Speech</th>' +
             '<th>Prediction Targeted</th><th>True Targeted</th>' +
             '<th>Prediction Aggressive</th><th>True Aggressive</th></tr>';
@@ -127,6 +194,11 @@ async function load_algorithm_samples() {
     it_sentiment_strings.push(s);
     var s = '<a href="https://aclanthology.org/2021.wassa-1.8/">[DATASET]</a></p>';
     it_sentiment_strings.push(s);
+
+    var it_sentiment_cf = await loadCfMatrix('IT_sentiment_cf.tsv');
+    it_sentiment_strings.push(it_sentiment_cf);
+    it_sentiment_strings.push('<br>');
+
     var s = '<table><tr><th>Campione</th><th>Predizione</th><th>Corretto</th></tr>';
     it_sentiment_strings.push(s);
     for (let prediction of it_sentiment_out) {
@@ -154,6 +226,11 @@ async function load_algorithm_samples() {
     it_emotion_strings.push(s);
     var s = '<a href="https://aclanthology.org/2021.wassa-1.8/">[DATASET]</a></p>';
     it_emotion_strings.push(s);
+
+    var it_emotion_cf = await loadCfMatrix('IT_emotion_cf.tsv');
+    it_emotion_strings.push(it_emotion_cf);
+    it_emotion_strings.push('<br>');
+
     var s = '<table><tr><th>Campione</th><th>Predizione</th><th>Corretto</th></tr>';
     it_emotion_strings.push(s);
     for (let prediction of it_emotion_out) {
@@ -181,6 +258,11 @@ async function load_algorithm_samples() {
     // en_hate_speech_strings.push(s);
     // var s = '<a href="https://aclanthology.org/S19-2007.pdf">[DATASET]</a></p>';
     // en_hate_speech_strings.push(s);
+
+    var it_hate_cf = await loadCfMatrix('IT_hate_speech_cf.tsv');
+    it_hate_speech_strings.push(it_hate_cf);
+    it_hate_speech_strings.push('<br>');
+
     var s = '<table><tr><th>Campione</th><th>Predizione</th><th>Corretto</th></tr>';
     it_hate_speech_strings.push(s);
     var label_dict = {0: 'false', 1: 'true'};
