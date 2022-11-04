@@ -14,6 +14,7 @@ from courage_algorithms.ES_text_algorithms.emotion_ES import predict_emotion_es
 from courage_algorithms.DE_text_algorithms.toxicity_DE import get_ensemble_prediction_toxic_de
 from courage_algorithms.IT_text_algorithms.hate_speech_detection_IT_RUG import predict_hate_speech_it
 from courage_algorithms.EN_text_algorithms.topic_identification_EN import predict_topic_en
+from courage_algorithms.cross_lingual_text_algorithms.translate_IT_EN import translate_it_en
 from crawler import *
 from courage_algorithms.scripts.path_setup import get_working_dir
 import json
@@ -889,6 +890,33 @@ def predict_toxicity_german():
     try:
         toxic_de = get_ensemble_prediction_toxic_de(text)
         output = json.dumps(toxic_de)
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+##########################
+# # # CROSS LINGUAL # # #
+##########################
+
+@api_blueprint.route("cross_lingual/IT_EN/", methods=["POST"])
+def translate_italian_to_english():
+    """
+    Translate an Italian text to English.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        translation = translate_it_en(text)
+        output = json.dumps(translation)
         status_code = 200
     except:
         # error
