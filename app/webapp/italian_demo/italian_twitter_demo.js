@@ -246,13 +246,13 @@ async function create_tweets(topic='covid') {
              '</div>';
          tweet_strings.push(s);
 
-         s = '<button type="button" id="analysis-button-' + tweet['id_str'] + '" class="analysis-button">Learn more about this post</button>'
+         s = '<button type="button" id="analysis-button-' + tweet['id_str'] + '" class="analysis-button">Ulteriori informazioni</button>'
          tweet_strings.push(s);
 
-         s = '<button type="button" id="tweets-user-' + tweet['id_str'] + '" class="tweets-user-button">Other posts of this user</button>'
+         s = '<button type="button" id="tweets-user-' + tweet['id_str'] + '" class="tweets-user-button">Altri messaggi di questo utente</button>'
          tweet_strings.push(s);
 
-         s = '<button type="button" id="tweets-topic-' + tweet['id_str'] + '" class="tweets-topic-button">Other opinions on that topic</button>'
+         s = '<button type="button" id="tweets-topic-' + tweet['id_str'] + '" class="tweets-topic-button">Altre opinioni sull\'argomento</button>'
          tweet_strings.push(s);
 
          var sent_name = tweet['id_str'] + '_sent'
@@ -260,15 +260,15 @@ async function create_tweets(topic='covid') {
          var hate_name = tweet['id_str'] + '_hate'
          s = '<div id="analysis-' + tweet['id_str'] + '" class="analysis">' +
              // '<div style="height: 200px">' +
-             '<p class="analysis-text">Sentiment analysis of this post:</p>' +
+             '<p class="analysis-text">Analisi del sentimento di questo post:</p>' +
              '<canvas class="analysis-canvas" id=' + sent_name + '></canvas>' +
              // '</div>' +
              // '<div style="height: 200px">' +
-             '<p class="analysis-text">Emotion analysis of this post:</p>' +
+             '<p class="analysis-text">Analisi delle emozioni di questo post:</p>' +
              '<canvas class="analysis-canvas" id=' + emotion_name + '></canvas>' +
              // '</div>' +
              // '<div style="height: 200px">' +
-             '<p class="analysis-text">Probability of this post being aggressive, hateful and targeted:</p>' +
+             '<p class="analysis-text">Classificazione di questo post odioso:</p>' +
              '<canvas class="analysis-canvas" id=' + hate_name + '></canvas>' +
              // '</div>' +
              '</div>';
@@ -279,7 +279,7 @@ async function create_tweets(topic='covid') {
 
          var user_tweets = await getUserDataIT(tweet['user']['id_str']);
          if (user_tweets['tweets'].length == 0) {
-            tweet_strings.push("<p class='user-tweets-text'>This user hasn't posted anything else yet...</p>");
+            tweet_strings.push("<p class='user-tweets-text'>Questo utente non ha ancora pubblicato nient\'altro...</p>");
          } else {
             for (let u_tweet of user_tweets['tweets']) {
                 tweet_strings.push('<p class="user-tweets-text">' + u_tweet['text'] + '</p>');
@@ -425,7 +425,7 @@ async function create_tweets(topic='covid') {
              data: {
                  labels: labels,
                  datasets: [{
-                     label: 'hate speech',
+                     label: 'incitamento all\'odio',
                      data: data_array,
                      backgroundColor: [
                         'rgba(203, 67, 53, 1)',
