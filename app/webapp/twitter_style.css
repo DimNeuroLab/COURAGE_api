@@ -344,3 +344,15 @@ body {
   width: 50%;
   height: 100px;
 }
+
+.echo-chamber-box {
+    background-color: white;
+    flex: 1;
+    padding: 10px;
+    border-bottom: 1px solid var(--twitter-background);
+}
+
+.echo-chamber-content {
+    border-radius: 10px;
+    padding: 10px;
+}

@@ -155,6 +155,13 @@ def analyze_twitter_data():
                 hateful, targeted, aggressive = predict_hate_speech_en_semeval19(tweet_text)
                 analysis_results['hate_speech'] = {'hateful': hateful, 'targeted': targeted, 'aggressive': aggressive}
 
+                topics = predict_topic_en(tweet_text)
+                topic_list = []
+                for key, value in topics.items():
+                    if value > 0.5:
+                        topic_list.append(key)
+                analysis_results['topics'] = topic_list
+
                 with open(get_working_dir() + '/app/webapp/analysis_results/' + file, 'w') as json_file:
                     json.dump(analysis_results, json_file)
 
@@ -185,49 +192,12 @@ def analyze_twitter_data():
                     for key, value in topics.items():
                         if value > 0.5:
                             topic_list.append(key)
-                    user_topics.append(topic_list)
-
-            topic_dict = {}
-            sum_topics = 0
-            for idx, value in enumerate(user_topics):
-                sum_topics += 1
-                for t in value:
-                    if t not in list(topic_dict.keys()):
-                        topic_dict[t] = {}
-                        topic_dict[t]['counts'] = 0
-                        topic_dict[t]['neg'] = 0
-                        topic_dict[t]['neu'] = 0
-                        topic_dict[t]['pos'] = 0
-                    topic_dict[t]['counts'] = topic_dict[t]['counts'] + 1
-                    if user_sentiment['negative'][idx] >= 0.33:
-                        topic_dict[t]['neg'] = topic_dict[t]['neg'] + 1
-                    if user_sentiment['neutral'][idx] >= 0.33:
-                        topic_dict[t]['neu'] = topic_dict[t]['neu'] + 1
-                    if user_sentiment['positive'][idx] >= 0.33:
-                        topic_dict[t]['pos'] = topic_dict[t]['pos'] + 1
-            filter_bubble = False
-            for key, value in topic_dict.items():
-                if value['counts'] / sum_topics >= 0.9:
-                    if value['neg'] / value['counts'] >= 0.9:
-                        filter_bubble = True
-                        filter_bubble_topic = key
-                        filter_bubble_sentiment = 'negative'
-                    if value['neu'] / value['counts'] >= 0.9:
-                        filter_bubble = True
-                        filter_bubble_topic = key
-                        filter_bubble_sentiment = 'neutral'
-                    if value['pos'] / value['counts'] >= 0.9:
-                        filter_bubble = True
-                        filter_bubble_topic = key
-                        filter_bubble_sentiment = 'positive'
-            if filter_bubble:
-                user_filter_bubble = {'topic': filter_bubble_topic, 'sentiment': filter_bubble_sentiment}
-            else:
-                user_filter_bubble = {'topic': 'none', 'sentiment': 'none'}
+                    user_tweet_sentiment = ['neg', 'neu', 'pos'][[neg, neu, pos].index(max([neg, neu, pos]))]
+                    user_topics.append({'topics': topic_list, 'sentiment': user_tweet_sentiment})
 
             user_sentiment = {key: sum(value) / len(value) for key, value in user_sentiment.items()}
             user_emotion = {key: sum(value) / len(value) for key, value in user_emotion.items()}
-            analysis_results = {'sentiment': {}, 'emotion': {}, 'filter_bubble': {}}
+            analysis_results = {'sentiment': {}, 'emotion': {}}
             sum_all_sentiment = sum([user_sentiment['negative'], user_sentiment['neutral'], user_sentiment['positive']])
             analysis_results['sentiment']['negative'] = user_sentiment['negative'] / sum_all_sentiment
             analysis_results['sentiment']['neutral'] = user_sentiment['neutral'] / sum_all_sentiment
@@ -237,8 +207,7 @@ def analyze_twitter_data():
             analysis_results['emotion']['anger'] = user_emotion['anger'] / sum_all_emotion
             analysis_results['emotion']['joy'] = user_emotion['joy'] / sum_all_emotion
             analysis_results['emotion']['optimism'] = user_emotion['optimism'] / sum_all_emotion
-            analysis_results['filter_bubble']['topic'] = user_filter_bubble['topic']
-            analysis_results['filter_bubble']['sentiment'] = user_filter_bubble['sentiment']
+            analysis_results['topics'] = user_topics
 
             with open(get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + folder + '.json', 'w') as json_file:
                 json.dump(analysis_results, json_file)
@@ -474,6 +443,13 @@ def analyze_twitter_data_IT():
                     analysis_results['sentiment'] = {'negative': neg, 'positive': pos}
                     analysis_results['emotion'] = predict_emotion_it(tweet_text)
                     analysis_results['hate_speech'] = predict_hate_speech_it(tweet_text)
+                    tweet_text_en = translate_it_en(tweet_text)
+                    topics = predict_topic_en(tweet_text_en['translation_text'])
+                    topic_list = []
+                    for key, value in topics.items():
+                        if value > 0.5:
+                            topic_list.append(key)
+                    analysis_results['topics'] = topic_list
                     topic_content['analysis'].append(analysis_results)
                 with open(get_working_dir() + '/app/webapp/italian_demo/data/topics/' + file, 'w') as json_file_output:
                     json.dump(topic_content, json_file_output)
@@ -483,6 +459,7 @@ def analyze_twitter_data_IT():
                 print('processing user...', file)
                 user_sentiment = {'negative': [], 'positive': []}
                 user_emotion = {'anger': [], 'fear': [], 'joy': [], 'sadness': []}
+                user_topics = []
                 with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + file, 'r') as json_file_input:
                     user_content = json.load(json_file_input)
                 user_content['analysis'] = []
@@ -497,6 +474,14 @@ def analyze_twitter_data_IT():
                         user_emotion['fear'].append(emotion_results['fear'])
                         user_emotion['joy'].append(emotion_results['joy'])
                         user_emotion['sadness'].append(emotion_results['sadness'])
+                        tweet_text_en = translate_it_en(tweet_text)
+                        topics = predict_topic_en(tweet_text_en['translation_text'])
+                        topic_list = []
+                        for key, value in topics.items():
+                            if value > 0.5:
+                                topic_list.append(key)
+                        user_tweet_sentiment = ['neg', 'pos'][[neg, pos].index(max([neg, pos]))]
+                        user_topics.append({'topics': topic_list, 'sentiment': user_tweet_sentiment})
                     user_sentiment = {key: sum(value) / len(value) for key, value in user_sentiment.items()}
                     user_emotion = {key: sum(value) / len(value) for key, value in user_emotion.items()}
                     analysis_results = {'sentiment': {}, 'emotion': {}}
@@ -509,6 +494,7 @@ def analyze_twitter_data_IT():
                     analysis_results['emotion']['fear'] = user_emotion['fear'] / sum_all_emotion
                     analysis_results['emotion']['joy'] = user_emotion['joy'] / sum_all_emotion
                     analysis_results['emotion']['sadness'] = user_emotion['sadness'] / sum_all_emotion
+                    analysis_results['topics'] = user_topics
                     user_content['analysis'].append(analysis_results)
                 with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + file, 'w') as json_file_output:
                     json.dump(user_content, json_file_output)

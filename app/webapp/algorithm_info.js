@@ -39,7 +39,7 @@ async function loadCfMatrix(file_name) {
     var labels = cf_data[0];
     var cf_data = cf_data.slice(1);
 
-    table.push('<table><tr><td></td>');
+    table.push('<table><tr><th style="background-color:#2e86c1">TRUE/PRED</th>');
     for (let label of labels) {
         table.push('<th>' + label + '</th>');
     }
@@ -49,8 +49,13 @@ async function loadCfMatrix(file_name) {
         var cf_row = cf_data[i];
         var s = '<tr><th>' + labels[i] + '</th>';
         table.push(s);
-        for (let value of cf_row) {
-            table.push('<td>' + value + '</td>');
+        for (var j = 0; j < cf_row.length; j++) {
+            var value = cf_row[j];
+            if (i == j) {
+                table.push('<td style="background-color:#e6ecf0">' + value + '</td>');
+            } else {
+                table.push('<td style="background-color:white">' + value + '</td>');
+            }
         }
         table.push('</tr>');
     }

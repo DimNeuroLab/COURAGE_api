@@ -183,9 +183,14 @@ async function create_tweets(topic='covid') {
       </div>
     `;
 
+    var echo_chamber_sentiment = [];
+    var echo_chamber_topics = [];
+
     var loaded_tweets = await getTweetDataIT(topic);
 
     var tweet_strings = [];
+    var s = '<div id="echo_chamber_div" class="echo-chamber-box"></div>';
+    tweet_strings.push(s);
 
     for (let tweet of loaded_tweets['tweets']) {
          s = '<div class="post">' +
@@ -318,7 +323,7 @@ async function create_tweets(topic='covid') {
          }
 
          if (topic_tweets.length == 0) {
-            tweet_strings.push("<p class='topic-tweets-text'>We couldn't find any tweets with similar topic...</p>");
+            tweet_strings.push("<p class='topic-tweets-text'>Non siamo riusciti a trovare alcun tweet con argomento simile...</p>");
          } else {
             for (let t_tweet of topic_tweets) {
                 tweet_strings.push('<p class="topic-tweets-text"><b>' + t_tweet['user']['name'] + '</b><br>' +
@@ -340,6 +345,17 @@ async function create_tweets(topic='covid') {
     document.getElementById("t_feed").innerHTML =  final_string + '</div>';
 
     for (let tweet_idx = 0; tweet_idx < loaded_tweets['tweets'].length; tweet_idx++) {
+
+         if (loaded_tweets['analysis'][tweet_idx]['topics'].length > 0) {
+            var sentiment_label = ['neg', 'pos'].at([loaded_tweets['analysis'][tweet_idx]['sentiment']['negative'],
+            loaded_tweets['analysis'][tweet_idx]['sentiment']['positive']].indexOf(Math.max(loaded_tweets['analysis'][tweet_idx]['sentiment']['negative'],
+            loaded_tweets['analysis'][tweet_idx]['sentiment']['positive'])));
+            for (let analysis_topic of loaded_tweets['analysis'][tweet_idx]['topics']) {
+                echo_chamber_sentiment.push(sentiment_label);
+                echo_chamber_topics.push(analysis_topic);
+            }
+         }
+
          var sent_name = loaded_tweets['tweets'][tweet_idx]['id_str'] + '_sent'
          var ctx = document.getElementById(sent_name);
          var data_array = [];
@@ -459,6 +475,14 @@ async function create_tweets(topic='covid') {
          var user_tweets = await getUserDataIT(loaded_tweets['tweets'][tweet_idx]['user']['id_str']);
          if (user_tweets['tweets'].length > 0) {
              var user_tweets_analysis = user_tweets['analysis'][0];
+
+             for (let topic_analysis of user_tweets_analysis['topics']) {
+                for (let topic_user_tweet of topic_analysis['topics']) {
+                    echo_chamber_topics.push(topic_user_tweet);
+                    echo_chamber_sentiment.push(topic_analysis['sentiment']);
+                }
+             }
+
              var user_tweets_sent = 'user-tweets-sentiment-canvas-' + loaded_tweets['tweets'][tweet_idx]['id_str'];
              var ctx = document.getElementById(user_tweets_sent);
              var data_array = [];
@@ -534,4 +558,17 @@ async function create_tweets(topic='covid') {
     }
 
     add_collapsible();
+
+    console.log(echo_chamber_topics);
+    console.log(echo_chamber_sentiment);
+
+    var echo_chamber_div = document.getElementById('echo_chamber_div');
+    var echo_chamber = false;
+    if (echo_chamber) {
+        echo_chamber_div.innerHTML = '<div class="echo-chamber-content" style="background-color:#e74c3c">Test</div>';
+    } else {
+        echo_chamber_div.innerHTML = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+        'There seem to be no echo chambers around your social network.</div>';
+    }
+
 }

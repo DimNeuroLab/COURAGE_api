@@ -162,11 +162,26 @@ function add_collapsible() {
 
 async function create_tweets() {
 
+    var echo_chamber_sentiment = [];
+    var echo_chamber_topics = [];
+
     var loaded_tweets = await getData();
 
     var tweet_strings = [];
+    var s = '<div id="echo_chamber_div" class="echo-chamber-box"></div>';
+    tweet_strings.push(s);
 
     for (let tweet of loaded_tweets) {
+         if (tweet[1]['topics'].length > 0) {
+            var sentiment_label = ['neg', 'neu', 'pos'].at([tweet[1]['sentiment']['negative'], tweet[1]['sentiment']['neutral'],
+            tweet[1]['sentiment']['positive']].indexOf(Math.max(tweet[1]['sentiment']['negative'],
+            tweet[1]['sentiment']['neutral'], tweet[1]['sentiment']['positive'])));
+            for (let analysis_topic of tweet[1]['topics']) {
+                echo_chamber_sentiment.push(sentiment_label);
+                echo_chamber_topics.push(analysis_topic);
+            }
+         }
+
          s = '<div class="post">' +
             '<div class="post__avatar">' +
             '<img src=' +
@@ -261,8 +276,8 @@ async function create_tweets() {
          } else {
             //tweet_strings.push('<p class="user-tweets-text" id="user-tweets-filter-bubble-' +
             //                   tweet[0]['id_str'] + '"></p>');
-            tweet_strings.push('<div id="user-tweets-filter-bubble-' +
-                               tweet[0]['id_str'] + '"></div>');
+            //tweet_strings.push('<div id="user-tweets-filter-bubble-' +
+            //                   tweet[0]['id_str'] + '"></div>');
             for (let u_tweet of user_tweets) {
                 tweet_strings.push('<p class="user-tweets-text">' + u_tweet['text'] + '</p>');
             }
@@ -439,7 +454,13 @@ async function create_tweets() {
          var user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
          if (user_tweets.length > 0) {
              var user_tweets_analysis = await loadUserTweetsAnalysis(tweet[0]['user']['id_str']);
-
+             for (let topic_analysis of user_tweets_analysis['topics']) {
+                for (let topic_user_tweet of topic_analysis['topics']) {
+                    echo_chamber_topics.push(topic_user_tweet);
+                    echo_chamber_sentiment.push(topic_analysis['sentiment']);
+                }
+             }
+             /*
              var user_tweets_filter_bubble = 'user-tweets-filter-bubble-' + tweet[0]['id_str'];
              var user_tweets_filter_bubble_sec = document.getElementById(user_tweets_filter_bubble);
              if (user_tweets_analysis['filter_bubble']['topic'] == 'none') {
@@ -454,6 +475,7 @@ async function create_tweets() {
                 user_tweets_analysis['filter_bubble']['sentiment'] +
                 ' content about ' + user_tweets_analysis['filter_bubble']['topic'] + '.</b></p>';
              }
+             */
 
              var user_tweets_sent = 'user-tweets-sentiment-canvas-' + tweet[0]['id_str'];
              var ctx = document.getElementById(user_tweets_sent);
@@ -531,4 +553,16 @@ async function create_tweets() {
     }
 
     add_collapsible();
+    console.log(echo_chamber_topics);
+    console.log(echo_chamber_sentiment);
+
+    var echo_chamber_div = document.getElementById('echo_chamber_div');
+    var echo_chamber = false;
+    if (echo_chamber) {
+        echo_chamber_div.innerHTML = '<div class="echo-chamber-content" style="background-color:#e74c3c">Test</div>';
+    } else {
+        echo_chamber_div.innerHTML = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+        'Sembra che non ci siano camere d\'eco intorno al tuo social network.</div>';
+    }
+
 }
