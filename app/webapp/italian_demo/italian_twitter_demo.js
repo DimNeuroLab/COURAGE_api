@@ -80,6 +80,27 @@ async function loadTopicTweets(topic_name, n) {
 };
 */
 
+
+async function getEchoChamberInfo(topics, sentiments) {
+    var echo_chambers = {};
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX + "identify_echo_chambers/",
+        contentType: 'application/json',
+        async: true,
+        data: JSON.stringify({'topics': topics, 'sentiments': sentiments}),
+        success: function (response) {
+            echo_chambers = response;
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+    return echo_chambers;
+};
+
+
 function closeAll() {
     var dolls = [];
     dolls = Array.prototype.concat.apply(dolls, document.getElementsByClassName("analysis-button"));
@@ -559,16 +580,23 @@ async function create_tweets(topic='covid') {
 
     add_collapsible();
 
-    console.log(echo_chamber_topics);
-    console.log(echo_chamber_sentiment);
+    // console.log(echo_chamber_topics);
+    // console.log(echo_chamber_sentiment);
+
+    var echo_chamber_analysis = await getEchoChamberInfo(echo_chamber_topics, echo_chamber_sentiment);
+    console.log(echo_chamber_analysis);
 
     var echo_chamber_div = document.getElementById('echo_chamber_div');
-    var echo_chamber = false;
-    if (echo_chamber) {
-        echo_chamber_div.innerHTML = '<div class="echo-chamber-content" style="background-color:#e74c3c">Test</div>';
+    if (Object.keys(echo_chamber_analysis).length > 0) {
+        var echo_str = '<div class="echo-chamber-content" style="background-color:#e74c3c"> Le camere d\'eco includono';
+        for (const [key, value] of Object.entries(echo_chamber_analysis)) {
+            echo_str = echo_str + ' <b>' + String(key) + '</b> con <b>' + String(value) + '</b> sentimento;';
+        }
+        echo_str = echo_str + '</div>';
+        echo_chamber_div.innerHTML = echo_str;
     } else {
         echo_chamber_div.innerHTML = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
-        'There seem to be no echo chambers around your social network.</div>';
+        'Sembra che non ci siano camere d\'eco intorno al tuo social network.</div>';
     }
 
 }

@@ -317,6 +317,56 @@ def load_user_tweets_analysis():
     return jsonify(analysis_results), status_code
 
 
+@api_blueprint.route("identify_echo_chambers/", methods=["POST"])
+def identify_echo_chambers():
+    """
+    Identify echo chambers in topic/sentiment lists.
+    """
+    data = request.json
+    if 'topics' in data and 'sentiments' in data:
+        topics = data['topics']
+        sentiments = data['sentiments']
+    else:
+        # no information posted
+        status_code = 400
+        return status_code
+    try:
+        num_labels = len(list(set(sentiments)))
+        analysis_results = {}
+        for idx, value in enumerate(topics):
+            value = value.replace('_', ' ')
+            if value not in analysis_results:
+                analysis_results[value] = [0] * num_labels
+            if sentiments[idx] == 'neg':
+                analysis_results[value][0] += 1
+            elif sentiments[idx] == 'neu':
+                analysis_results[value][1] += 1
+            elif sentiments[idx] == 'pos' and num_labels == 3:
+                analysis_results[value][2] += 1
+            elif sentiments[idx] == 'pos' and num_labels == 2:
+                analysis_results[value][1] += 1
+        for key, value in analysis_results.items():
+            if sum(value) > 3:
+                new_sentiment_scores = []
+                for sentiment_score in value:
+                    new_sentiment_scores.append(sentiment_score/sum(value))
+                analysis_results[key] = new_sentiment_scores
+            else:
+                analysis_results[key] = [0]
+        echo_chambers = {}
+        for topic, sentiments in analysis_results.items():
+            if max(sentiments) >= 0.75 and len(sentiments) == 3:
+                echo_chambers[topic] = ['neg', 'neu', 'pos'][sentiments.index(max(sentiments))]
+            elif max(sentiments) >= 0.75 and len(sentiments) == 2:
+                echo_chambers[topic] = ['neg', 'pos'][sentiments.index(max(sentiments))]
+        status_code = 200
+    except:
+        # error
+        echo_chambers = {}
+        status_code = 444
+    return jsonify(echo_chambers), status_code
+
+
 @api_blueprint.route("load_topic_data_IT/", methods=["POST"])
 def load_topic_data_IT():
     """
