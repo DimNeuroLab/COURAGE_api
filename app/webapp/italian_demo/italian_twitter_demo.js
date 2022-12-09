@@ -272,6 +272,7 @@ async function create_tweets(topic='covid') {
              '</div>';
          tweet_strings.push(s);
 
+         tweet_strings.push('<div class="analysis-buttons-div">');
          s = '<button type="button" id="analysis-button-' + tweet['id_str'] + '" class="analysis-button">Ulteriori informazioni</button>'
          tweet_strings.push(s);
 
@@ -280,6 +281,7 @@ async function create_tweets(topic='covid') {
 
          s = '<button type="button" id="tweets-topic-' + tweet['id_str'] + '" class="tweets-topic-button">Altre opinioni sull\'argomento</button>'
          tweet_strings.push(s);
+         tweet_strings.push('</div>');
 
          var sent_name = tweet['id_str'] + '_sent'
          var emotion_name = tweet['id_str'] + '_emotion'

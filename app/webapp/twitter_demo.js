@@ -260,6 +260,7 @@ async function create_tweets() {
              '</div>';
          tweet_strings.push(s);
 
+         tweet_strings.push('<div class="analysis-buttons-div">');
          s = '<button type="button" id="analysis-button-' + tweet[0]['id_str'] + '" class="analysis-button">Learn more about this post</button>'
          tweet_strings.push(s);
 
@@ -268,6 +269,7 @@ async function create_tweets() {
 
          s = '<button type="button" id="tweets-topic-' + tweet[0]['id_str'] + '" class="tweets-topic-button">Other opinions on that topic</button>'
          tweet_strings.push(s);
+         tweet_strings.push('</div>');
 
          var sent_name = tweet[0]['id_str'] + '_sent'
          var emotion_name = tweet[0]['id_str'] + '_emotion'
