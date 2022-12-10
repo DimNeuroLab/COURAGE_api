@@ -183,6 +183,15 @@ function add_collapsible() {
 
 }
 
+
+function image_exists(image_url){
+    var http = new XMLHttpRequest();
+    http.open('HEAD', image_url, false);
+    http.send();
+    return http.status != 404;
+}
+
+
 async function create_tweets(topic='covid') {
 
     document.getElementById("t_feed").innerHTML = `
@@ -214,10 +223,14 @@ async function create_tweets(topic='covid') {
     tweet_strings.push(s);
 
     for (let tweet of loaded_tweets['tweets']) {
+         var img_src = "https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png";
+         if(image_exists(tweet['user']['profile_image_url_https'])) {
+            img_src = tweet['user']['profile_image_url_https'];
+         }
          s = '<div class="post">' +
             '<div class="post__avatar">' +
             '<img src=' +
-            tweet['user']['profile_image_url_https'] +
+            img_src +
             ' alt="" />' +
             '</div>' +
             '<div class="post__body">' +
@@ -303,6 +316,11 @@ async function create_tweets(topic='covid') {
          tweet_strings.push(s);
 
          s = '<div id="user_tweets-' + tweet['id_str'] + '" class="analysis-user-tweets">';
+         tweet_strings.push(s);
+         s = '<div class="echo-chamber-box-single">' +
+         '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+         'Sembra che non ci siano camere d\'eco attorno al social network di questo utente.</div>' +
+         '</div>';
          tweet_strings.push(s);
 
          var user_tweets = await getUserDataIT(tweet['user']['id_str']);

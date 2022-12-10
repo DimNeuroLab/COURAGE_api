@@ -365,3 +365,9 @@ body {
     border-radius: 10px;
     padding: 10px;
 }
+
+.echo-chamber-box-single {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 15px;
+}

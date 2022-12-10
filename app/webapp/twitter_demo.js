@@ -180,6 +180,15 @@ function add_collapsible() {
 
 }
 
+
+function image_exists(image_url){
+    var http = new XMLHttpRequest();
+    http.open('HEAD', image_url, false);
+    http.send();
+    return http.status != 404;
+}
+
+
 async function create_tweets() {
 
     var echo_chamber_sentiment = [];
@@ -202,10 +211,14 @@ async function create_tweets() {
             }
          }
 
+         var img_src = "https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png";
+         if(image_exists(tweet[0]['user']['profile_image_url_https'])) {
+            img_src = tweet[0]['user']['profile_image_url_https'];
+         }
          s = '<div class="post">' +
             '<div class="post__avatar">' +
             '<img src=' +
-            tweet[0]['user']['profile_image_url_https'] +
+            img_src +
             ' alt="" />' +
             '</div>' +
             '<div class="post__body">' +
@@ -292,6 +305,12 @@ async function create_tweets() {
 
          s = '<div id="user_tweets-' + tweet[0]['id_str'] + '" class="analysis-user-tweets">';
          tweet_strings.push(s);
+         s = '<div class="echo-chamber-box-single">' +
+         '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+         'There seems to be no echo chambers around the social network of this user.</div>' +
+         '</div>';
+         tweet_strings.push(s);
+
          user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
          if (user_tweets.length == 0) {
             tweet_strings.push("<p class='user-tweets-text'>This user hasn't posted anything else yet...</p>");
