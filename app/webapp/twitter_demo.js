@@ -39,6 +39,26 @@ async function loadUserTweets(user_id) {
 };
 
 
+async function getUserFollowing(user_id) {
+    var user_ids = {'following': []};
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX + "load_user_following_data/",
+        contentType: 'application/json',
+        async: true,
+        data: JSON.stringify({'user_id': user_id}),
+        success: function (response) {
+            user_ids = response;
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+    return user_ids
+};
+
+
 async function loadUserTweetsAnalysis(user_id) {
     await $.ajax
     ({
@@ -305,13 +325,57 @@ async function create_tweets() {
 
          s = '<div id="user_tweets-' + tweet[0]['id_str'] + '" class="analysis-user-tweets">';
          tweet_strings.push(s);
-         s = '<div class="echo-chamber-box-single">' +
-         '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
-         'There seems to be no echo chambers around the social network of this user.</div>' +
-         '</div>';
-         tweet_strings.push(s);
 
-         user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
+         s = '<div class="echo-chamber-box-single">';
+         tweet_strings.push(s);
+         var followed_users = await getUserFollowing(tweet[0]['user']['id_str']);
+
+         if (followed_users['following'].length == 0) {
+            s = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+            'There seems to be no echo chambers around the social network of this user.';
+            tweet_strings.push(s);
+         } else {
+            var one_hop_topics = [];
+            var one_hop_sentiments = [];
+
+            var user_tweets_analysis = await loadUserTweetsAnalysis(tweet[0]['user']['id_str']);
+            if (user_tweets_analysis['topics'].length > 0) {
+                for (let topic_analysis of user_tweets_analysis['topics']) {
+                    for (let topic_user_tweet of topic_analysis['topics']) {
+                        one_hop_topics.push(topic_user_tweet);
+                        one_hop_sentiments.push(topic_analysis['sentiment']);
+                    }
+                 }
+            }
+
+            for (let user_id of followed_users['following']) {
+                var following_tweets_analysis = await loadUserTweetsAnalysis(user_id);
+                if (following_tweets_analysis['topics'].length > 0) {
+                    for (let topic_analysis of following_tweets_analysis['topics']) {
+                        for (let topic_following_tweet of topic_analysis['topics']) {
+                            one_hop_topics.push(topic_following_tweet);
+                            one_hop_sentiments.push(topic_analysis['sentiment']);
+                        }
+                     }
+                }
+            }
+
+            var user_echo_chamber_analysis = await getEchoChamberInfo(one_hop_topics, one_hop_sentiments);
+            if (Object.keys(user_echo_chamber_analysis).length > 0) {
+                var echo_str = '<div class="echo-chamber-content" style="background-color:#e74c3c"> Echo chambers include';
+                for (const [key, value] of Object.entries(user_echo_chamber_analysis)) {
+                    echo_str = echo_str + ' <b>' + String(key) + '</b> with <b>' + String(value) + '</b> sentiment;';
+                }
+                tweet_strings.push(echo_str);
+            } else {
+                s = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+                'There seem to be no echo chambers around your social network.';
+                tweet_strings.push(s);
+            }
+         }
+         tweet_strings.push('</div></div>');
+
+         var user_tweets = await loadUserTweets(tweet[0]['user']['id_str']);
          if (user_tweets.length == 0) {
             tweet_strings.push("<p class='user-tweets-text'>This user hasn't posted anything else yet...</p>");
          } else {

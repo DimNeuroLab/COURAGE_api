@@ -61,6 +61,11 @@ def search_tweets(stream, search_query, language='en', num_tweets=15): # 15
     return matching_tweets
 
 
+def get_users_following_ids(stream, user_id, num_followers=15):
+    following_ids = stream.get_friends_ids(user_id=user_id, count=num_followers)
+    return following_ids['ids']
+
+
 def save_home_tweet(tweet):
     file_path = get_working_dir() + '/app/webapp/tweets/' + tweet['id_str'] + '.json'
     with open(file_path, 'w') as fp:
@@ -77,6 +82,13 @@ def save_user_tweet(tweet, user_id):
     file_path = get_working_dir() + '/app/webapp/tweets_users/' + user_id + '/' + tweet['id_str'] + '.json'
     with open(file_path, 'w') as fp:
         json.dump(tweet, fp)
+
+
+def save_followed_users(following_id_list, user_id):
+    file_path = get_working_dir() + '/app/webapp/tweets_following/' + str(user_id) + '.json'
+    file_content = {'following': following_id_list}
+    with open(file_path, 'w') as fp:
+        json.dump(file_content, fp)
 
 
 def create_new_topic_folder(topic):
@@ -116,6 +128,7 @@ def delete_topic_tweet_dir(topic):
     for file in os.listdir(dir_path):
         file_path = dir_path + '/' + file
         os.remove(file_path)
+    os.rmdir(dir_path)
 
 
 def delete_user_tweet_dir(user_id):
@@ -123,8 +136,24 @@ def delete_user_tweet_dir(user_id):
     for file in os.listdir(dir_path):
         file_path = dir_path + '/' + file
         os.remove(file_path)
+    os.rmdir(dir_path)
     file_path = get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + user_id + '.json'
     os.remove(file_path)
+
+
+def delete_user_followed_dir(user_id):
+    file_path = get_working_dir() + '/app/webapp/tweets_following/' + user_id + '.json'
+    os.remove(file_path)
+
+
+def clear_demo_data():
+    delete_home_timeline_dir()
+    for tweet_topic in os.listdir(get_working_dir() + '/app/webapp/tweets_topics'):
+        delete_topic_tweet_dir(tweet_topic)
+    for tweet_user in os.listdir(get_working_dir() + '/app/webapp/tweets_users'):
+        delete_user_tweet_dir(tweet_user)
+    for user_id in os.listdir(get_working_dir() + '/app/webapp/tweets_following'):
+        delete_user_followed_dir(user_id)
 
 
 def save_topic_tweets_italian(tweet_list, topic):
@@ -139,3 +168,19 @@ def save_user_tweets_italian(tweet_list, user_id):
     file_content = {'tweets': tweet_list, 'analysis': []}
     with open(file_path, 'w') as fp:
         json.dump(file_content, fp)
+
+
+def save_followed_users_italian(following_id_list, user_id):
+    file_path = get_working_dir() + '/app/webapp/italian_demo/data/following/' + str(user_id) + '.json'
+    file_content = {'following': following_id_list}
+    with open(file_path, 'w') as fp:
+        json.dump(file_content, fp)
+
+
+def clear_italian_demo_data():
+    data_path = get_working_dir() + '/app/webapp/italian_demo/data/'
+    for folder in ['following', 'topic', 'users']:
+        folder_path = data_path + folder
+        for file in os.listdir(folder_path):
+            file_path = folder_path + '/' + file
+            os.remove(file_path)

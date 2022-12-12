@@ -133,6 +133,32 @@ def load_tweets_topic():
     return jsonify(res), status_code
 
 
+@api_blueprint.route("load_user_following_data/", methods=["POST"])
+def load_user_following_data():
+    """
+    Load list of following ids of specific user for demo page.
+    """
+    data = request.json
+    if 'user_id' in data:
+        user_id = str(data['user_id'])
+    else:
+        # no user id posted
+        status_code = 400
+        return status_code
+    try:
+        file_path = get_working_dir() + '/app/webapp/tweets_following/' + user_id + '.json'
+        if os.path.isfile(file_path):
+            with open(file_path) as json_file:
+                tweet_data = json.load(json_file)
+        else:
+            tweet_data = {'following': []}
+        status_code = 200
+        return jsonify(tweet_data), status_code
+    except:
+        status_code = 444
+        return status_code
+
+
 @api_blueprint.route("analyze_twitter_data/", methods=["GET"])
 def analyze_twitter_data():
     """
@@ -224,11 +250,12 @@ def crawl_new_data():
     Crawl new data for feed.
     """
     try:
+        clear_demo_data()
+
         stream = initialize_stream()
         stream_stats = {'users': 0,
-                        'topics': 0}
-
-        delete_home_timeline_dir()
+                        'topics': 0,
+                        'following': 0}
 
         home_tweets = get_home_timeline_tweets(stream)
         users = []
@@ -240,23 +267,49 @@ def crawl_new_data():
 
         topics = list(set(topics))
         for topic in topics:
-            # if stream_stats['topics'] * 15 >= 450:
-            #    print('sleeping for 15min to get new topics...')
-            #    time.sleep(901)
+            if stream_stats['topics'] >= 180:
+                print('sleeping for 15min to get new topics...')
+                time.sleep(901)
+                stream_stats['topics'] = 0
+            print(topic)
             create_new_topic_folder(topic)
-            delete_topic_tweet_dir(topic)
             topic_tweets = search_tweets(stream, topic)
             for topic_tweet in topic_tweets:
                 save_topic_tweet(topic_tweet, topic)
             stream_stats['topics'] += 1
 
+        all_following_ids = []
         for user_id in users:
+            if stream_stats['users'] >= 900:
+                print('sleeping for 15min to get new users...')
+                time.sleep(901)
+                stream_stats['users'] = 0
+            if stream_stats['following'] >= 15:
+                print('sleeping for 15min to get new following...')
+                time.sleep(901)
+                stream_stats['following'] = 0
             create_new_user_folder(user_id)
-            delete_user_tweet_dir(user_id)
             user_tweets = get_user_timeline_tweets(stream, user_id)
             for user_tweet in user_tweets:
                 save_user_tweet(user_tweet, user_id)
+            user_following_ids = get_users_following_ids(stream, user_id)
+            save_followed_users(user_following_ids, user_id)
+            all_following_ids += user_following_ids
             stream_stats['users'] += 1
+            stream_stats['following'] += 1
+
+        for user_id in all_following_ids:
+            if stream_stats['users'] >= 900:
+                print('sleeping for 15min to get new users...')
+                time.sleep(901)
+                stream_stats['users'] = 0
+            dir_path = get_working_dir() + '/app/webapp/tweets_users/' + user_id
+            if not os.path.exists(dir_path):
+                create_new_user_folder(user_id)
+                user_tweets = get_user_timeline_tweets(stream, user_id)
+                for user_tweet in user_tweets:
+                    save_user_tweet(user_tweet, user_id)
+                stream_stats['users'] += 1
                 
         status_code = 200
     except:
@@ -300,15 +353,18 @@ def load_user_tweets_analysis():
     """
     data = request.json
     if 'user_id' in data:
-        user_id = data['user_id']
+        user_id = str(data['user_id'])
     else:
         # no text posted
         status_code = 400
         return status_code
     try:
         file_path = get_working_dir() + '/app/webapp/analysis_results/tweets_users/' + user_id + '.json'
-        with open(file_path) as json_file:
-            analysis_results = json.load(json_file)
+        if os.path.isfile(file_path):
+            with open(file_path) as json_file:
+                analysis_results = json.load(json_file)
+        else:
+            analysis_results = {'sentiment': {}, 'emotion': {}, 'topics': []}
         status_code = 200
     except:
         # error
@@ -470,13 +526,16 @@ def crawl_new_data_IT():
         status_code = 400
         return status_code
     try:
+        clear_italian_demo_data()
+
         stream = initialize_stream()
         stream_stats = {'users': 0,
-                        'topics': 0}
+                        'topics': 0,
+                        'following': 0}
         users = []
         for topic in topics:
             print(topic)
-            if stream_stats['topics'] * 15 >= 166:
+            if stream_stats['topics'] >= 180:
                 print('sleeping for 15min to get new topics...')
                 time.sleep(901)
                 stream_stats['topics'] = 0
@@ -486,12 +545,30 @@ def crawl_new_data_IT():
             save_topic_tweets_italian(topic_tweets, topic)
             stream_stats['topics'] += 1
 
+        all_following_ids = []
         for user_id in users:
-            if stream_stats['users'] * 10 >= 891:
+            if stream_stats['users'] >= 900:
                 print('sleeping for 15min to get new users...')
                 time.sleep(901)
                 stream_stats['users'] = 0
+            if stream_stats['following'] >= 15:
+                print('sleeping for 15min to get new following information...')
+                time.sleep(901)
+                stream_stats['following'] = 0
             print(user_id)
+            user_tweets = get_user_timeline_tweets(stream, user_id)
+            save_user_tweets_italian(user_tweets, user_id)
+            user_following_ids = get_users_following_ids(stream, user_id)
+            save_followed_users_italian(user_following_ids, user_id)
+            all_following_ids += user_following_ids
+            stream_stats['users'] += 1
+            stream_stats['following'] += 1
+
+        for user_id in all_following_ids:
+            if stream_stats['users'] >= 900:
+                print('sleeping for 15min to get new users...')
+                time.sleep(901)
+                stream_stats['users'] = 0
             user_tweets = get_user_timeline_tweets(stream, user_id)
             save_user_tweets_italian(user_tweets, user_id)
             stream_stats['users'] += 1

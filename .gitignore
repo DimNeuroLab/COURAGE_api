@@ -159,6 +159,7 @@ cython_debug/
 /app/webapp/tweets/
 /app/webapp/tweets_topics/
 /app/webapp/tweets_users/
+/app/webapp/tweets_following/
 /app/webapp/analysis_results/
 /app/webapp/twitter_keys.json
 /app/webapp/italian_demo/data/
