@@ -412,14 +412,44 @@ def load_user_data_IT():
     """
     data = request.json
     if 'user_id' in data:
-        user_id = data['user_id']
+        user_id = str(data['user_id'])
     else:
         # no user id posted
         status_code = 400
         return status_code
     try:
-        with open(get_working_dir() + '/app/webapp/italian_demo/data/users/' + user_id + '.json') as json_file:
-            tweet_data = json.load(json_file)
+        file_path = get_working_dir() + '/app/webapp/italian_demo/data/users/' + user_id + '.json'
+        if os.path.isfile(file_path):
+            with open(file_path) as json_file:
+                tweet_data = json.load(json_file)
+        else:
+            tweet_data = {'tweets': [], 'analysis': [{'sentiment': {}, 'emotion': {}, 'topics': []}]}
+        status_code = 200
+        return jsonify(tweet_data), status_code
+    except:
+        status_code = 444
+        return status_code
+
+
+@api_blueprint.route("load_user_following_data_IT/", methods=["POST"])
+def load_user_following_data_IT():
+    """
+    Load list of following ids of specific user for Italian demo page.
+    """
+    data = request.json
+    if 'user_id' in data:
+        user_id = str(data['user_id'])
+    else:
+        # no user id posted
+        status_code = 400
+        return status_code
+    try:
+        file_path = get_working_dir() + '/app/webapp/italian_demo/data/following/' + user_id + '.json'
+        if os.path.isfile(file_path):
+            with open(file_path) as json_file:
+                tweet_data = json.load(json_file)
+        else:
+            tweet_data = {'following': []}
         status_code = 200
         return jsonify(tweet_data), status_code
     except:
