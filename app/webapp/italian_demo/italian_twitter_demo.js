@@ -22,7 +22,7 @@ async function getTweetDataIT(topic, n=0) {
 
 
 async function getUserDataIT(user_id) {
-    var loaded_tweets = [];
+    var loaded_tweets = {'tweets': []};
     await $.ajax
     ({
         type: "POST",
@@ -39,6 +39,27 @@ async function getUserDataIT(user_id) {
     });
     return loaded_tweets;
 };
+
+
+async function getUserFollowingIT(user_id) {
+    var user_ids = {'following': []};
+    await $.ajax
+    ({
+        type: "POST",
+        url: API_URL_PREFIX + "load_user_following_data_IT/",
+        contentType: 'application/json',
+        async: true,
+        data: JSON.stringify({'user_id': user_id}),
+        success: function (response) {
+            user_ids = response;
+        },
+        error: function (error) {
+            console.log("error: " + error)
+        },
+    });
+    return user_ids
+};
+
 
 /*
 async function loadUserTweetsAnalysis(user_id) {
@@ -317,13 +338,60 @@ async function create_tweets(topic='covid') {
 
          s = '<div id="user_tweets-' + tweet['id_str'] + '" class="analysis-user-tweets">';
          tweet_strings.push(s);
-         s = '<div class="echo-chamber-box-single">' +
-         '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
-         'Sembra che non ci siano camere d\'eco attorno al social network di questo utente.</div>' +
-         '</div>';
-         tweet_strings.push(s);
 
          var user_tweets = await getUserDataIT(tweet['user']['id_str']);
+
+         s = '<div class="echo-chamber-box-single">';
+         tweet_strings.push(s);
+         var followed_users = await getUserFollowingIT(tweet['user']['id_str']);
+         if (followed_users['following'].length == 0) {
+            s = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+            'Sembra che non ci siano camere d\'eco attorno al social network di questo utente.';
+            tweet_strings.push(s);
+         } else {
+            var one_hop_topics = [];
+            var one_hop_sentiments = [];
+
+            console.log(user_tweets);
+            var user_tweets_analysis = user_tweets['analysis'][0];
+            if (user_tweets_analysis['topics'].length > 0) {
+                for (let topic_analysis of user_tweets_analysis['topics']) {
+                    for (let topic_user_tweet of topic_analysis['topics']) {
+                        one_hop_topics.push(topic_user_tweet);
+                        one_hop_sentiments.push(topic_analysis['sentiment']);
+                    }
+                 }
+            }
+
+            for (let user_id of followed_users['following']) {
+                var following_tweets = await getUserDataIT(user_id);
+                var following_tweets_analysis = following_tweets['analysis'][0];
+                if (following_tweets_analysis['topics'].length > 0) {
+                    for (let topic_analysis of following_tweets_analysis['topics']) {
+                        for (let topic_following_tweet of topic_analysis['topics']) {
+                            one_hop_topics.push(topic_following_tweet);
+                            one_hop_sentiments.push(topic_analysis['sentiment']);
+                        }
+                     }
+                }
+            }
+
+            var user_echo_chamber_analysis = await getEchoChamberInfo(one_hop_topics, one_hop_sentiments);
+            if (Object.keys(user_echo_chamber_analysis).length > 0) {
+                var echo_str = '<div class="echo-chamber-content" style="background-color:#e74c3c"> Le camere d\'eco includono';
+                for (const [key, value] of Object.entries(user_echo_chamber_analysis)) {
+                    echo_str = echo_str + ' <b>' + String(key) + '</b> con <b>' + String(value) + '</b> sentimento;';
+                }
+                tweet_strings.push(echo_str);
+            } else {
+                var echo_str = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+                'Sembra che non ci siano camere d\'eco intorno al tuo social network.';
+                tweet_strings.push(echo_str);
+            }
+         }
+         tweet_strings.push('</div></div>');
+
+
          if (user_tweets['tweets'].length == 0) {
             tweet_strings.push("<p class='user-tweets-text'>Questo utente non ha ancora pubblicato nient\'altro...</p>");
          } else {
@@ -604,7 +672,6 @@ async function create_tweets(topic='covid') {
     // console.log(echo_chamber_sentiment);
 
     var echo_chamber_analysis = await getEchoChamberInfo(echo_chamber_topics, echo_chamber_sentiment);
-    console.log(echo_chamber_analysis);
 
     var echo_chamber_div = document.getElementById('echo_chamber_div');
     if (Object.keys(echo_chamber_analysis).length > 0) {
