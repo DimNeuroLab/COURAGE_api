@@ -480,6 +480,8 @@ def load_user_data_IT():
                 tweet_data = json.load(json_file)
         else:
             tweet_data = {'tweets': [], 'analysis': [{'sentiment': {}, 'emotion': {}, 'topics': []}]}
+        if len(tweet_data['analysis']) == 0:
+            tweet_data = {'tweets': [], 'analysis': [{'sentiment': {}, 'emotion': {}, 'topics': []}]}
         status_code = 200
         return jsonify(tweet_data), status_code
     except:
@@ -532,13 +534,16 @@ def crawl_new_data_IT():
         stream_stats = {'users': 0,
                         'topics': 0,
                         'following': 0}
+
         users = []
         for topic in topics:
             print(topic)
             if stream_stats['topics'] >= 180:
                 print('sleeping for 15min to get new topics...')
                 time.sleep(901)
+                stream_stats['users'] = 0
                 stream_stats['topics'] = 0
+                stream_stats['following'] = 0
             topic_tweets = search_tweets(stream, topic, language='it')
             for t in topic_tweets:
                 users.append(t['user']['id_str'])
@@ -551,16 +556,23 @@ def crawl_new_data_IT():
                 print('sleeping for 15min to get new users...')
                 time.sleep(901)
                 stream_stats['users'] = 0
+                stream_stats['topics'] = 0
+                stream_stats['following'] = 0
             if stream_stats['following'] >= 15:
                 print('sleeping for 15min to get new following information...')
                 time.sleep(901)
+                stream_stats['users'] = 0
+                stream_stats['topics'] = 0
                 stream_stats['following'] = 0
             print(user_id)
-            user_tweets = get_user_timeline_tweets(stream, user_id)
-            save_user_tweets_italian(user_tweets, user_id)
-            user_following_ids = get_users_following_ids(stream, user_id)
-            save_followed_users_italian(user_following_ids, user_id)
-            all_following_ids += user_following_ids
+            try:
+                user_tweets = get_user_timeline_tweets(stream, user_id)
+                save_user_tweets_italian(user_tweets, user_id)
+                user_following_ids = get_users_following_ids(stream, user_id)
+                save_followed_users_italian(user_following_ids, user_id)
+                all_following_ids += user_following_ids
+            except:
+                pass
             stream_stats['users'] += 1
             stream_stats['following'] += 1
 
@@ -569,8 +581,14 @@ def crawl_new_data_IT():
                 print('sleeping for 15min to get new users...')
                 time.sleep(901)
                 stream_stats['users'] = 0
-            user_tweets = get_user_timeline_tweets(stream, user_id)
-            save_user_tweets_italian(user_tweets, user_id)
+                stream_stats['topics'] = 0
+                stream_stats['following'] = 0
+            print(user_id)
+            try:
+                user_tweets = get_user_timeline_tweets(stream, user_id)
+                save_user_tweets_italian(user_tweets, user_id)
+            except:
+                pass
             stream_stats['users'] += 1
 
         status_code = 200
