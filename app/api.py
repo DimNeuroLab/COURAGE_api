@@ -618,7 +618,6 @@ def analyze_twitter_data_IT():
                     neg, pos = predict_sentiment_it(tweet_text)
                     analysis_results['sentiment'] = {'negative': neg, 'positive': pos}
                     analysis_results['emotion'] = predict_emotion_it(tweet_text)
-                    analysis_results['hate_speech'] = predict_hate_speech_it(tweet_text)
                     tweet_text_en = translate_it_en(tweet_text)
                     topics = predict_topic_en(tweet_text_en['translation_text'])
                     topic_list = []
@@ -626,6 +625,7 @@ def analyze_twitter_data_IT():
                         if value > 0.5:
                             topic_list.append(key)
                     analysis_results['topics'] = topic_list
+                    analysis_results['hate_speech'] = predict_hate_speech_en_facebook(tweet_text_en['translation_text'])
                     topic_content['analysis'].append(analysis_results)
                 with open(get_working_dir() + '/app/webapp/italian_demo/data/topics/' + file, 'w') as json_file_output:
                     json.dump(topic_content, json_file_output)
@@ -843,7 +843,7 @@ def predict_hate_speech_english_facebook():
         return status_code
     try:
         not_hate, hate = predict_hate_speech_en_facebook(text)
-        output = json.dumps({'not_hate': not_hate,
+        output = json.dumps({'not hate': not_hate,
                              'hate': hate})
         status_code = 200
     except:
