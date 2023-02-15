@@ -7,6 +7,7 @@ from courage_algorithms.IT_text_algorithms.emotion_IT import predict_emotion_it
 from courage_algorithms.IT_text_algorithms.sentiment_IT import predict_sentiment_it
 from courage_algorithms.EN_text_algorithms.sentiment_EN import predict_sentiment_en
 from courage_algorithms.EN_text_algorithms.hate_speech_detection_EN_SemEval19 import predict_hate_speech_en_semeval19
+from courage_algorithms.EN_text_algorithms.hate_speech_detection_EN_facebook import predict_hate_speech_en_facebook
 from courage_algorithms.ES_text_algorithms.sentiment_ES import predict_sentiment_es
 from courage_algorithms.DE_text_algorithms.sentiment_DE import predict_sentiment_de
 from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
@@ -411,9 +412,9 @@ def identify_echo_chambers():
                 analysis_results[key] = [0]
         echo_chambers = {}
         for topic, sentiments in analysis_results.items():
-            if max(sentiments) >= 0.75 and len(sentiments) == 3:
+            if max(sentiments) >= 0.85 and len(sentiments) == 3:
                 echo_chambers[topic] = ['neg', 'neu', 'pos'][sentiments.index(max(sentiments))]
-            elif max(sentiments) >= 0.75 and len(sentiments) == 2:
+            elif max(sentiments) >= 0.85 and len(sentiments) == 2:
                 echo_chambers[topic] = ['neg', 'pos'][sentiments.index(max(sentiments))]
         status_code = 200
     except:
@@ -820,6 +821,30 @@ def predict_hate_speech_english_semeval19():
         output = json.dumps({'hateful': hateful,
                              'targeted': targeted,
                              'aggressive': aggressive})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("EN/hate_speech_facebook/", methods=["POST"])
+def predict_hate_speech_english_facebook():
+    """
+    Predict whether an English text contains hate speech or not (trained by facebook on a diverse dataset).
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        not_hate, hate = predict_hate_speech_en_facebook(text)
+        output = json.dumps({'not_hate': not_hate,
+                             'hate': hate})
         status_code = 200
     except:
         # error
