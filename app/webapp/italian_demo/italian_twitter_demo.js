@@ -202,6 +202,23 @@ function add_collapsible() {
       });
     }
 
+    var coll = [];
+    coll = Array.prototype.concat.apply(coll, document.getElementsByClassName("tweets-echo-button"));
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        //closeAll();
+        this.classList.toggle("active");
+        var content = document.getElementById("echo_chamber-" + this['id'].split('-')[2])
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+          closeAll();
+        } else {
+          closeAll();
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+
 }
 
 
@@ -315,6 +332,10 @@ async function create_tweets(topic='covid') {
 
          s = '<button type="button" id="tweets-topic-' + tweet['id_str'] + '" class="tweets-topic-button">Altre opinioni sull\'argomento</button>'
          tweet_strings.push(s);
+
+         s = '<button type="button" id="tweets-echo-' + tweet['id_str'] + '" class="tweets-echo-button">Echo chamber info</button>'
+         tweet_strings.push(s);
+
          tweet_strings.push('</div>');
 
          var sent_name = tweet['id_str'] + '_sent'
@@ -341,6 +362,7 @@ async function create_tweets(topic='covid') {
 
          var user_tweets = await getUserDataIT(tweet['user']['id_str']);
 
+         /*
          s = '<div class="echo-chamber-box-single">';
          tweet_strings.push(s);
          var followed_users = await getUserFollowingIT(tweet['user']['id_str']);
@@ -352,7 +374,7 @@ async function create_tweets(topic='covid') {
             var one_hop_topics = [];
             var one_hop_sentiments = [];
 
-            console.log(user_tweets);
+            // console.log(user_tweets);
             var user_tweets_analysis = user_tweets['analysis'][0];
             if (user_tweets_analysis['topics'].length > 0) {
                 for (let topic_analysis of user_tweets_analysis['topics']) {
@@ -390,7 +412,7 @@ async function create_tweets(topic='covid') {
             }
          }
          tweet_strings.push('</div></div>');
-
+         */
 
          if (user_tweets['tweets'].length == 0) {
             tweet_strings.push("<p class='user-tweets-text'>Questo utente non ha ancora pubblicato nient\'altro...</p>");
@@ -440,6 +462,66 @@ async function create_tweets(topic='covid') {
             }
          }
          tweet_strings.push('</div>');
+
+
+         s = '<div id="echo_chamber-' + tweet['id_str'] + '" class="analysis-echo-tweets">';
+         tweet_strings.push(s);
+         s = '<p class="user-tweets-text">How we identify echo chambers:</p>';
+         tweet_strings.push(s);
+
+         // var user_tweets = await getUserDataIT(tweet['user']['id_str']);
+         s = '<div class="echo-chamber-box-single">';
+         tweet_strings.push(s);
+         var followed_users = await getUserFollowingIT(tweet['user']['id_str']);
+         if (followed_users['following'].length == 0) {
+            s = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+            'Sembra che non ci siano camere d\'eco attorno al social network di questo utente.';
+            tweet_strings.push(s);
+         } else {
+            var one_hop_topics = [];
+            var one_hop_sentiments = [];
+
+            // console.log(user_tweets);
+            var user_tweets_analysis = user_tweets['analysis'][0];
+            if (user_tweets_analysis['topics'].length > 0) {
+                for (let topic_analysis of user_tweets_analysis['topics']) {
+                    for (let topic_user_tweet of topic_analysis['topics']) {
+                        one_hop_topics.push(topic_user_tweet);
+                        one_hop_sentiments.push(topic_analysis['sentiment']);
+                    }
+                 }
+            }
+
+            for (let user_id of followed_users['following']) {
+                var following_tweets = await getUserDataIT(user_id);
+                var following_tweets_analysis = following_tweets['analysis'][0];
+                if (following_tweets_analysis['topics'].length > 0) {
+                    for (let topic_analysis of following_tweets_analysis['topics']) {
+                        for (let topic_following_tweet of topic_analysis['topics']) {
+                            one_hop_topics.push(topic_following_tweet);
+                            one_hop_sentiments.push(topic_analysis['sentiment']);
+                        }
+                     }
+                }
+            }
+
+            var user_echo_chamber_analysis = await getEchoChamberInfo(one_hop_topics, one_hop_sentiments);
+            if (Object.keys(user_echo_chamber_analysis).length > 0) {
+                var echo_str = '<div class="echo-chamber-content" style="background-color:#e74c3c"> Le camere d\'eco includono';
+                for (const [key, value] of Object.entries(user_echo_chamber_analysis)) {
+                    echo_str = echo_str + ' <b>' + String(key) + '</b> con <b>' + String(value) + '</b> sentimento;';
+                }
+                tweet_strings.push(echo_str);
+            } else {
+                var echo_str = '<div class="echo-chamber-content" style="background-color:#2ecc71">' +
+                'Sembra che non ci siano camere d\'eco intorno al tuo social network.';
+                tweet_strings.push(echo_str);
+            }
+         }
+         tweet_strings.push('</div></div>');
+
+         s = '</div>';
+         tweet_strings.push(s);
 
     }
 
@@ -554,7 +636,7 @@ async function create_tweets(topic='covid') {
                      data: data_array,
                      backgroundColor: [
                         'rgba(203, 67, 53, 1)',
-                        'rgba(203, 67, 53, 1)'
+                        'rgba(39, 174, 96, 1)'
                      ]
                  }]
              },
