@@ -283,7 +283,7 @@ body {
   background-color: #2e86c1;
 }
 
-.tweets-topic-button, .tweets-user-button {
+.tweets-topic-button, .tweets-user-button, .tweets-echo-button {
   display: inline-block;
   align-items: flex-start;
   cursor: pointer;
@@ -300,7 +300,7 @@ body {
   margin-bottom: 5px;
 }
 
-.tweets-topic-button:hover, .tweets-user-button:hover {
+.tweets-topic-button:hover, .tweets-user-button:hover, .tweets-echo-button:hover {
   background-color: #2e86c1;
 }
 
@@ -324,7 +324,7 @@ body {
   background-color: var(--twitter-background);
 }
 
-.analysis-topic-tweets {
+.analysis-topic-tweets, .analysis-echo-tweets {
   padding: 0 10px;
   border-bottom: 1px solid var(--twitter-background);
   max-height: 0;
@@ -409,4 +409,5 @@ body {
     margin-left: 10px;
     margin-right: 10px;
     margin-top: 15px;
+    margin-bottom: 15px;
 }
