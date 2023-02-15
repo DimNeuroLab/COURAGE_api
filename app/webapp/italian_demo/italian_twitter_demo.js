@@ -146,6 +146,14 @@ function closeAll() {
         var content = document.getElementById("topic_tweets-" + dol['id'].split('-')[2])
         content.style.maxHeight = null;
     }
+
+    var dolls = [];
+    dolls = Array.prototype.concat.apply(dolls, document.getElementsByClassName("tweets-echo-button"));
+    for (let dol of dolls) {
+        dol.classList.remove("active");
+        var content = document.getElementById("echo_chamber-" + dol['id'].split('-')[2])
+        content.style.maxHeight = null;
+    }
 }
 
 
