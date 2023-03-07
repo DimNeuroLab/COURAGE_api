@@ -14,11 +14,13 @@ def load_model():
                                                               local_files_only=True)
 
 
-def predict_topic_en(sentence):
-    tokenizer = load_tokenizer()
-    model = load_model()
+def predict_topic_en(sentence, tokenizer=None, model=None):
+    if tokenizer is None:
+        tokenizer = load_tokenizer()
+    if model is None:
+        model = load_model()
 
-    inputs = tokenizer(sentence, return_tensors="pt")
+    inputs = tokenizer(sentence, return_tensors="pt", truncation=True, max_length=512)
 
     outputs = model(**inputs)
     logits = outputs['logits']

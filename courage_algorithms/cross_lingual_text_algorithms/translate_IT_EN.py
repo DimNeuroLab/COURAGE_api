@@ -8,7 +8,8 @@ def load_translator():
     return translator
 
 
-def translate_it_en(sentence):
-    translator = load_translator()
+def translate_it_en(sentence, translator=None):
+    if translator is None:
+        translator = load_translator()
     translation = translator(sentence)
     return translation[0]

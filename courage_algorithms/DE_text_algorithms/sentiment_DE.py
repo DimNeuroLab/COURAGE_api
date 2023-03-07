@@ -35,11 +35,13 @@ def clean_text(text):
     return text
 
 
-def predict_sentiment_de(sentence):
+def predict_sentiment_de(sentence, tokenizer=None, model=None):
     sentence = clean_text(sentence)
 
-    tokenizer = load_tokenizer()
-    model = load_model()
+    if tokenizer is None:
+        tokenizer = load_tokenizer()
+    if model is None:
+        model = load_model()
 
     inputs = tokenizer(sentence, return_tensors="pt")
 
