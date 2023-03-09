@@ -524,12 +524,17 @@ def crawl_new_data_IT():
     data = request.json
     if 'topics' in data:
         topics = data['topics']
+        crawl_new_topics = True
     else:
         # no topics posted
-        status_code = 400
-        return status_code
+        crawl_new_topics = False
+    if 'clear' in data:
+        clear_data = data['clear']
+    else:
+        clear_data = False
     try:
-        clear_italian_demo_data()
+        if clear_data:
+            clear_italian_demo_data()
 
         stream = initialize_stream()
         stream_stats = {'users': 0,
@@ -537,19 +542,26 @@ def crawl_new_data_IT():
                         'following': 0}
 
         users = []
-        for topic in topics:
-            print(topic)
-            if stream_stats['topics'] >= 180:
-                print('sleeping for 15min to get new topics...')
-                time.sleep(901)
-                stream_stats['users'] = 0
-                stream_stats['topics'] = 0
-                stream_stats['following'] = 0
-            topic_tweets = search_tweets(stream, topic, language='it')
-            for t in topic_tweets:
-                users.append(t['user']['id_str'])
-            save_topic_tweets_italian(topic_tweets, topic)
-            stream_stats['topics'] += 1
+        if crawl_new_topics:
+            for topic in topics:
+                print(topic)
+                if stream_stats['topics'] >= 180:
+                    print('sleeping for 15min to get new topics...')
+                    time.sleep(901)
+                    stream_stats['users'] = 0
+                    stream_stats['topics'] = 0
+                    stream_stats['following'] = 0
+                topic_tweets = search_tweets(stream, topic, language='it')
+                for t in topic_tweets:
+                    users.append(t['user']['id_str'])
+                save_topic_tweets_italian(topic_tweets, topic)
+                stream_stats['topics'] += 1
+        else:
+            for topic_file in os.listdir(get_working_dir() + '/app/webapp/italian_demo/data/topics/'):
+                with open(get_working_dir() + '/app/webapp/italian_demo/data/topics/' + topic_file) as json_file:
+                    tweet_data = json.load(json_file)
+                for t in tweet_data['tweets']:
+                    users.append(t['user']['id_str'])
 
         all_following_ids = []
         for user_id in users:
