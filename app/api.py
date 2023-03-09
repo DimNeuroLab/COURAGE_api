@@ -14,7 +14,7 @@ from courage_algorithms.EN_text_algorithms.emotion_EN import predict_emotion_en
 from courage_algorithms.ES_text_algorithms.emotion_ES import predict_emotion_es
 from courage_algorithms.DE_text_algorithms.toxicity_DE import get_ensemble_prediction_toxic_de
 from courage_algorithms.IT_text_algorithms.hate_speech_detection_IT_RUG import predict_hate_speech_it
-from courage_algorithms.EN_text_algorithms.topic_identification_EN import predict_topic_en
+from courage_algorithms.EN_text_algorithms.topic_identification_EN import predict_topic_en, predict_cip_topic
 from courage_algorithms.cross_lingual_text_algorithms.translate_IT_EN import translate_it_en
 from crawler import *
 from courage_algorithms.scripts.path_setup import get_working_dir
@@ -907,6 +907,33 @@ def identify_topics_english():
             if value > 0.5:
                 topic_list.append(key)
         output = json.dumps({'topics': topic_list})
+        status_code = 200
+    except:
+        # error
+        output = ""
+        status_code = 444
+    return output, status_code
+
+
+@api_blueprint.route("EN/topics_cip/", methods=["POST"])
+def identify_cip_topics_english():
+    """
+    Identify topics of an English Text.
+    """
+    data = request.json
+    if 'text' in data:
+        text = data['text']
+    else:
+        # no text posted
+        status_code = 400
+        return status_code
+    try:
+        topics = predict_cip_topic(text)
+        topic = ''
+        for key, value in topics.items():
+            if value >= 0.5:
+                topic = key
+        output = json.dumps({'topic': topic})
         status_code = 200
     except:
         # error

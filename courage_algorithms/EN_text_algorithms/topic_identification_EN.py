@@ -39,3 +39,35 @@ def predict_topic_en(sentence, tokenizer=None, model=None):
     for i in range(proba.shape[0]):
         output[label_names[ranking[i]]] = np.round(float(proba[ranking[i]]), 4)
     return output
+
+
+def load_cip_tokenizer():
+    return AutoTokenizer.from_pretrained(
+        get_working_dir() + '/courage_algorithms/models/standard_models/bert-base-cased',
+        local_files_only=True)
+
+
+def load_cip_model():
+    return AutoModelForSequenceClassification.from_pretrained(
+        get_working_dir() + '/courage_algorithms/models/BERT_topic_multi',
+        local_files_only=True)
+
+
+def predict_cip_topic(sentence, tokenizer=None, model=None):
+    if tokenizer is None:
+        tokenizer = load_tokenizer()
+    if model is None:
+        model = load_cip_model()
+
+    inputs = tokenizer(sentence, return_tensors="pt")
+
+    labels = torch.tensor([1]).unsqueeze(0)
+    outputs = model(**inputs, labels=labels)
+    loss, logits = outputs[:2]
+    logits = logits.squeeze(0)
+
+    proba = torch.softmax(logits, dim=0)
+    other, covid, immigrants, politics = proba
+
+    return {'other': np.round(other.item(), 4), 'covid': np.round(covid.item(), 4),
+            'immigrants': np.round(immigrants.item(), 4), 'politics': np.round(politics.item(), 4)}
