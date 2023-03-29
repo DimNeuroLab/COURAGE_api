@@ -80,3 +80,13 @@ There are several endpoints:
 | Endpoint              | HTTP method | Requires auth? | Description                                                    | Returned data                                                                                                                                                                                                          | Requested data format                   | 
 |-----------------------|-------------|----------------|----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
 | /cross_lingual/IT_EN/ | POST        | no             | Translation of an Italian text to English on success, else 444 | **200 OK** `{'translation_text': <translation>}` on success, where `<translation>` is the translated text in English. <br /> **400 Missing Arg** if no text is passed to the endpoint. <br /> **444 Bad Request** else | `{'text': <text>}` as string in Italian |
+
+
+## Instructions for running the docker container
+
+To successfully deploy the application on your machine as a docker container, you have to follow the steps listed below:
+
+1. run `sudo docker build -f Dockerfile -t courage_api .` inside the root directory to build de docker image
+2. run `sudo docker run -d -p 5000:4000 courage_api` to run the docker container
+
+You can now check if the container is up and running `sudo docker container ls -a`
