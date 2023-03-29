@@ -28,6 +28,30 @@ def show_italian_twitter_demo():
     return render_template("/italian_demo/italian_twitter_demo.html")
 
 
+@web_blueprint.route("/twitter_demo_it_plain", methods=["GET"])
+def show_italian_twitter_demo_plain():
+    """returns the twitter demo page"""
+    return render_template("/italian_demo/italian_twitter_demo_plain.html")
+
+
+@web_blueprint.route("/twitter_demo_it_nb_e1", methods=["GET"])
+def show_italian_twitter_demo_no_buttons_experiment1():
+    """returns the twitter demo page without buttons for experiment 1"""
+    return render_template("/italian_demo/italian_twitter_demo_nb_e1.html")
+
+
+@web_blueprint.route("/twitter_demo_en_plain", methods=["GET"])
+def show_english_twitter_demo_plain():
+    """returns the English twitter demo page"""
+    return render_template("/english_demo/english_twitter_demo_plain.html")
+
+
+@web_blueprint.route("/twitter_demo_en_nb_e1", methods=["GET"])
+def show_english_twitter_demo_no_buttons_experiment1():
+    """returns the English twitter demo page without buttons for experiment 1"""
+    return render_template("/english_demo/english_twitter_demo_nb_e1.html")
+
+
 @web_blueprint.route("/algorithm_info", methods=["GET"])
 def show_algorithm_info():
     """returns the algorithm info page"""

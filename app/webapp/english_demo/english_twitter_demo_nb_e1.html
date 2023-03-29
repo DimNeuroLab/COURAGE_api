@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="libs/jquery.min.js" type="text/javascript"></script>
+    <script src="libs/Chart.min.js" type="text/javascript"></script>
+    <script src="libs/bootstrap.min.js" type="text/javascript"></script>
+    <script src="english_demo/english_twitter_demo_nb_e1.js" type="text/javascript"></script>
+    <title>Twitter Demo</title>
+    <link rel="stylesheet" href="english_demo/english_twitter_style_experimental.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <!-- credit: https://github.com/somanath-goudar/html-css-projects -->
+</head>
+<body onload="create_tweets('experiment')">
+    <div class="sidebar">
+      <i class="fab fa-twitter"></i>
+      <div class="sidebarOption active">
+        <span class="material-icons"> home </span>
+        <h2>Home</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> search </span>
+        <h2>Explore</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> notifications_none </span>
+        <h2>Notifications</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> mail_outline </span>
+        <h2>Messages</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> bookmark_border </span>
+        <h2>Bookmarks</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> list_alt </span>
+        <h2>Lists</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> perm_identity </span>
+        <h2>Profile</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> more_horiz </span>
+        <h2>More</h2>
+      </div>
+      <button class="sidebar__tweet">Tweet</button>
+    </div>
+    <!-- sidebar ends -->
+
+    <!-- feed starts -->
+    <div id="t_feed" class="feed">
+      <div class="feed__header">
+        <h2>Home</h2>
+      </div>
+
+      <!-- tweetbox starts -->
+      <div class="tweetBox">
+        <form>
+          <div class="tweetbox__input">
+            <img
+              src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
+              alt=""
+            />
+            <input type="text" placeholder="What's happening?" />
+          </div>
+          <button class="tweetBox__tweetButton">Tweet</button>
+        </form>
+      </div>
+      <!-- tweetbox ends -->
+
+    </div>
+    <!-- feed ends -->
+
+    <!-- widgets starts -->
+    <div class="widgets">
+      <div class="widgets__input">
+        <span class="material-icons widgets__searchIcon"> search </span>
+        <input type="text" placeholder="Search Twitter" />
+      </div>
+
+      <div class="widgets__widgetContainer">
+          <h2>What's happening?</h2>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('covid19')">covid19</a></b>
+          </div>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('elezioni')">elections</a></b>
+          </div>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('immigrati')">immigration</a></b>
+          </div>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('trap music')">trap music</a></b>
+          </div>
+          <!--
+          <div class="topic-link">
+              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-5</a></b>
+          </div>
+          -->
+      </div>
+
+      <div class="widgets__widgetContainer">
+        <h2>What's happening?</h2>
+        <blockquote class="twitter-tweet">
+          <p lang="en" dir="ltr">
+            Sunsets don&#39;t get much better than this one over
+            <a href="https://twitter.com/GrandTetonNPS?ref_src=twsrc%5Etfw">@GrandTetonNPS</a>.
+            <a href="https://twitter.com/hashtag/nature?src=hash&amp;ref_src=twsrc%5Etfw"
+              >#nature</a
+            >
+            <a href="https://twitter.com/hashtag/sunset?src=hash&amp;ref_src=twsrc%5Etfw"
+              >#sunset</a
+            >
+            <a href="http://t.co/YuKy2rcjyU">pic.twitter.com/YuKy2rcjyU</a>
+          </p>
+          &mdash; US Department of the Interior (@Interior)
+          <a href="https://twitter.com/Interior/status/463440424141459456?ref_src=twsrc%5Etfw"
+            >May 5, 2014</a
+          >
+        </blockquote>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </div>
+    </div>
+    <!-- widgets ends -->
+</body>
+</html>
