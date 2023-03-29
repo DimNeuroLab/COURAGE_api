@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="libs/jquery.min.js" type="text/javascript"></script>
+    <script src="libs/Chart.min.js" type="text/javascript"></script>
+    <script src="libs/bootstrap.min.js" type="text/javascript"></script>
+    <script src="italian_demo/italian_twitter_demo_plain.js" type="text/javascript"></script>
+    <title>Twitter Demo</title>
+    <link rel="stylesheet" href="italian_demo/italian_twitter_style.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <!-- credit: https://github.com/somanath-goudar/html-css-projects -->
+</head>
+<body onload="create_tweets('covid19')">
+    <div class="sidebar">
+      <i class="fab fa-twitter"></i>
+      <div class="sidebarOption active">
+        <span class="material-icons"> home </span>
+        <h2>Home</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> search </span>
+        <h2>Esplora</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> notifications_none </span>
+        <h2>Notifiche</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> mail_outline </span>
+        <h2>Messaggi</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> bookmark_border </span>
+        <h2>Segnalibir</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> list_alt </span>
+        <h2>Liste</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> perm_identity </span>
+        <h2>Profilo</h2>
+      </div>
+
+      <div class="sidebarOption">
+        <span class="material-icons"> more_horiz </span>
+        <h2>Altro</h2>
+      </div>
+      <button class="sidebar__tweet">Twitta</button>
+    </div>
+    <!-- sidebar ends -->
+
+    <!-- feed starts -->
+    <div id="t_feed" class="feed">
+      <div class="feed__header">
+        <h2>Home</h2>
+      </div>
+
+      <!-- tweetbox starts -->
+      <div class="tweetBox">
+        <form>
+          <div class="tweetbox__input">
+            <img
+              src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
+              alt=""
+            />
+            <input type="text" placeholder="Che c'è di nuovo?" />
+          </div>
+          <button class="tweetBox__tweetButton">Twitta</button>
+        </form>
+      </div>
+      <!-- tweetbox ends -->
+
+    </div>
+    <!-- feed ends -->
+
+    <!-- widgets starts -->
+    <div class="widgets">
+      <div class="widgets__input">
+        <span class="material-icons widgets__searchIcon"> search </span>
+        <input type="text" placeholder="Cerca su Twitter" />
+      </div>
+
+      <div class="widgets__widgetContainer">
+          <h2>Tendenze per te</h2>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('covid19')">covid19</a></b>
+          </div>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('elezioni')">elezioni</a></b>
+          </div>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('immigrati')">immigrati</a></b>
+          </div>
+          <div class="topic-link">
+              <b><a class="topic-link-a" href="#" style="text-decoration: none;"
+                    onclick="create_tweets('trap music')">trap music</a></b>
+          </div>
+          <!--
+          <div class="topic-link">
+              <b><a href="#" style="text-decoration: none;" onclick="create_tweets('covid')">Topic-5</a></b>
+          </div>
+          -->
+      </div>
+
+      <div class="widgets__widgetContainer">
+        <h2>Che c'è di nuovo?</h2>
+        <blockquote class="twitter-tweet">
+          <p lang="it" dir="ltr">
+              <a href="https://twitter.com/hashtag/BuongiornoRoma?src=hashtag_click"
+              >#BuongiornoRoma</a>
+              Credit: <a href="https://www.instagram.com/p/Ch362VGqTQW/"
+              >http://instagram.com/p/CgcOpKkMiIa/</a> - Fontana di Trevi
+              <a href="https://pbs.twimg.com/media/FbAKtZGXgAAAB_u?format=jpg&name=large">pic.twitter.com</a>
+          </p>
+          &mdash; Roma (@Roma)
+          <a href="https://twitter.com/Roma/status/1565210342531256321"
+            >Sep 1, 2022</a
+          >
+        </blockquote>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </div>
+    </div>
+    <!-- widgets ends -->
+</body>
+</html>
