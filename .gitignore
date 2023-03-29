@@ -163,3 +163,5 @@ cython_debug/
 /app/webapp/analysis_results/
 /app/webapp/twitter_keys.json
 /app/webapp/italian_demo/data/
+
+/app/webapp/english_demo/data/
