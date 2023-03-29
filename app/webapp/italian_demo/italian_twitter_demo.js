@@ -6,7 +6,7 @@ async function getTweetDataIT(topic, n=0) {
     await $.ajax
     ({
         type: "POST",
-        url: API_URL_PREFIX + "load_topic_data_IT/",
+        url: API_URL_PREFIX + "load_topic_data_EXP/",
         contentType: 'application/json',
         async: true,
         data: JSON.stringify({'topic': topic, 'n': n}),
@@ -26,7 +26,7 @@ async function getUserDataIT(user_id) {
     await $.ajax
     ({
         type: "POST",
-        url: API_URL_PREFIX + "load_user_data_IT/",
+        url: API_URL_PREFIX + "load_user_data_EXP/",
         contentType: 'application/json',
         async: true,
         data: JSON.stringify({'user_id': user_id}),
@@ -46,7 +46,7 @@ async function getUserFollowingIT(user_id) {
     await $.ajax
     ({
         type: "POST",
-        url: API_URL_PREFIX + "load_user_following_data_IT/",
+        url: API_URL_PREFIX + "load_user_following_data_EXP/",
         contentType: 'application/json',
         async: true,
         data: JSON.stringify({'user_id': user_id}),
@@ -240,6 +240,7 @@ function image_exists(image_url){
 
 async function create_tweets(topic='covid') {
 
+    /*
     document.getElementById("t_feed").innerHTML = `
       <div class="feed__header">
         <h2>Home</h2>
@@ -252,13 +253,13 @@ async function create_tweets(topic='covid') {
               src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
               alt=""
             />
-            <input type="text" placeholder="Che c'è di nuovo?" />
+            <input id="post_input" type="text" placeholder="Che c'è di nuovo?" />
           </div>
-          <button class="tweetBox__tweetButton">Twitta</button>
+          <button href="#" class="tweetBox__tweetButton">Twitta</button>
         </form>
       </div>
     `;
-
+    */
     var echo_chamber_sentiment = [];
     var echo_chamber_topics = [];
 
@@ -332,16 +333,16 @@ async function create_tweets(topic='covid') {
          tweet_strings.push(s);
 
          tweet_strings.push('<div class="analysis-buttons-div">');
-         s = '<button type="button" id="analysis-button-' + tweet['id_str'] + '" class="analysis-button">Ulteriori informazioni</button>'
+         s = '<button type="button" id="analysis-button-' + tweet['id_str'] + '" class="analysis-button"><span class="tooltip-text">ulteriori informazioni</span><img src="libs/icons/info.png" height="30px"></button>'
          tweet_strings.push(s);
 
-         s = '<button type="button" id="tweets-user-' + tweet['id_str'] + '" class="tweets-user-button">Altri messaggi di questo utente</button>'
+         s = '<button type="button" id="tweets-user-' + tweet['id_str'] + '" class="tweets-user-button"><span class="tooltip-text">altri messaggi di questo utente</span><img src="libs/icons/user_info.png" height="30px"></button>'
          tweet_strings.push(s);
 
-         s = '<button type="button" id="tweets-topic-' + tweet['id_str'] + '" class="tweets-topic-button">Altre opinioni sull\'argomento</button>'
+         s = '<button type="button" id="tweets-topic-' + tweet['id_str'] + '" class="tweets-topic-button"><span class="tooltip-text">altre opinioni sull\'argomento</span><img src="libs/icons/discussion.png" height="30px"></button>'
          tweet_strings.push(s);
 
-         s = '<button type="button" id="tweets-echo-' + tweet['id_str'] + '" class="tweets-echo-button">Echo chamber info</button>'
+         s = '<button type="button" id="tweets-echo-' + tweet['id_str'] + '" class="tweets-echo-button"><span class="tooltip-text">echo chamber info</span><img src="libs/icons/bubble.png" height="30px"></button>'
          tweet_strings.push(s);
 
          tweet_strings.push('</div>');
@@ -350,18 +351,20 @@ async function create_tweets(topic='covid') {
          var emotion_name = tweet['id_str'] + '_emotion'
          var hate_name = tweet['id_str'] + '_hate'
          s = '<div id="analysis-' + tweet['id_str'] + '" class="analysis">' +
-             // '<div style="height: 200px">' +
-             '<p class="analysis-text">Analisi del sentimento di questo post:</p>' +
+             '<div class="post-diagram">' +
+             //'<p class="analysis-text">Analisi del sentimento di questo post:</p>' +
+             '<div class="post-analysis-canvas-sentiment-emotion">' +
              '<canvas class="analysis-canvas" id=' + sent_name + '></canvas>' +
-             // '</div>' +
-             // '<div style="height: 200px">' +
-             '<p class="analysis-text">Analisi delle emozioni di questo post:</p>' +
+             '</div>' +
+             '<div class="post-analysis-canvas-sentiment-emotion">' +
+             //'<p class="analysis-text">Analisi delle emozioni di questo post:</p>' +
              '<canvas class="analysis-canvas" id=' + emotion_name + '></canvas>' +
-             // '</div>' +
-             // '<div style="height: 200px">' +
-             '<p class="analysis-text">Classificazione di questo post odioso:</p>' +
+             '</div>' +
+             '<div class="post-analysis-canvas-hate-speech">' +
+             //'<p class="analysis-text">Classificazione di questo post odioso:</p>' +
              '<canvas class="analysis-canvas" id=' + hate_name + '></canvas>' +
-             // '</div>' +
+             '</div>' +
+             '</div>' +
              '</div>';
          tweet_strings.push(s);
 
@@ -474,7 +477,12 @@ async function create_tweets(topic='covid') {
 
          s = '<div id="echo_chamber-' + tweet['id_str'] + '" class="analysis-echo-tweets">';
          tweet_strings.push(s);
-         s = '<p class="user-tweets-text">How we identify echo chambers:</p>';
+         s = '<p class="user-tweets-text">' +
+         'Una camera d\'eco sui social media si riferisce a quando un messaggio o una discussione viene ripetuta o ' +
+         'amplificata da molte persone in modo che sembra che sia ovunque, anche se in realtà è solo una ripetizione ' +
+         'del messaggio originale. Questo può accadere quando molte persone condividono o commentano lo stesso post o ' +
+         'quando un gruppo di persone con opinioni simili si uniscono per discutere di un argomento specifico.' +
+         '</p>';
          tweet_strings.push(s);
 
          // var user_tweets = await getUserDataIT(tweet['user']['id_str']);
@@ -558,13 +566,13 @@ async function create_tweets(topic='covid') {
          var sent_name = loaded_tweets['tweets'][tweet_idx]['id_str'] + '_sent'
          var ctx = document.getElementById(sent_name);
          var data_array = [];
-         var labels = [];
+         var labels = ['negativo', 'positivo'];
          for (let key in loaded_tweets['analysis'][tweet_idx]['sentiment']) {
-             data_array.push(parseFloat(loaded_tweets['analysis'][tweet_idx]['sentiment'][key]))
-             labels.push(key)
+             data_array.push(Math.round((parseFloat(loaded_tweets['analysis'][tweet_idx]['sentiment'][key]) + Number.EPSILON) * 100));
+             // labels.push(key)
          }
          var myChart = new Chart(ctx, {
-             type: 'doughnut',
+             type: 'pie',
              data: {
                  labels: labels,
                  datasets: [{
@@ -577,10 +585,16 @@ async function create_tweets(topic='covid') {
                  }]
              },
              options: {
+                 aspectRatio: 1,
+                 cutoutPercentage: 20,
                  responsive: true,
                  // maintainAspectRatio: false,
+                 title: {
+                    display: true,
+                    text: 'sentimento'
+                 },
                  legend: {
-                     display: true,
+                     display: false,
                      position: 'right',
                      labels: {
                          fontColor: 'rgb(0,0,0)'
@@ -593,13 +607,13 @@ async function create_tweets(topic='covid') {
          var emotion_name = loaded_tweets['tweets'][tweet_idx]['id_str'] + '_emotion'
          var ctx = document.getElementById(emotion_name);
          var data_array = [];
-         var labels = [];
+         var labels = ['rabbia', 'paura', 'gioia', 'tristezza'];
          for (let key in loaded_tweets['analysis'][tweet_idx]['emotion']) {
-             data_array.push(parseFloat(loaded_tweets['analysis'][tweet_idx]['emotion'][key]))
-             labels.push(key)
+             data_array.push(Math.round((parseFloat(loaded_tweets['analysis'][tweet_idx]['emotion'][key]) + Number.EPSILON) * 100));
+             // labels.push(key)
          }
          var myChart = new Chart(ctx, {
-             type: 'doughnut',
+             type: 'pie',
              data: {
                  labels: labels,
                  datasets: [{
@@ -614,10 +628,16 @@ async function create_tweets(topic='covid') {
                  }]
              },
              options: {
+                 aspectRatio: 1,
+                 cutoutPercentage: 20,
                  responsive: true,
                  // maintainAspectRatio: false,
+                 title: {
+                    display: true,
+                    text: 'emozioni'
+                 },
                  legend: {
-                     display: true,
+                     display: false,
                      position: 'right',
                      labels: {
                          fontColor: 'rgb(0,0,0)'
@@ -630,11 +650,14 @@ async function create_tweets(topic='covid') {
          var hate_name = loaded_tweets['tweets'][tweet_idx]['id_str'] + '_hate'
          var ctx = document.getElementById(hate_name);
          var data_array = [];
-         var labels = [];
+         var labels = ['incitamento all\'odio'];
+         data_array.push(Math.round((parseFloat(loaded_tweets['analysis'][tweet_idx]['hate_speech'][1]) + Number.EPSILON) * 100));
+         /*
          for (let key in loaded_tweets['analysis'][tweet_idx]['hate_speech']) {
              data_array.push(parseFloat(loaded_tweets['analysis'][tweet_idx]['hate_speech'][key]))
              labels.push(key)
          }
+         */
          var myChart = new Chart(ctx, {
              type: 'bar',
              data: {
@@ -644,15 +667,20 @@ async function create_tweets(topic='covid') {
                      data: data_array,
                      backgroundColor: [
                         'rgba(203, 67, 53, 1)',
-                        'rgba(39, 174, 96, 1)'
+                        //'rgba(39, 174, 96, 1)'
                      ]
                  }]
              },
              options: {
+                 aspectRatio: 1,
                  responsive: true,
                  // maintainAspectRatio: false,
+                 title: {
+                    display: true,
+                    text: 'incitamento all\'odio'
+                 },
                  legend: {
-                     display: true,
+                     display: false,
                      position: 'right',
                      labels: {
                          fontColor: 'rgb(0,0,0)'
@@ -661,15 +689,21 @@ async function create_tweets(topic='covid') {
                  },
                  scales: {
                     yAxes: [{
-                            display: true,
+                            display: false,
                             ticks: {
                                 beginAtZero: true,
                                 max: 1
                             }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            display: false
+                        }
                     }]
                  }
              }
          });
+         // ctx.style.backgroundColor = 'rgba(255,255,255)';
 
          var user_tweets = await getUserDataIT(loaded_tweets['tweets'][tweet_idx]['user']['id_str']);
          if (user_tweets['tweets'].length > 0) {
@@ -685,10 +719,10 @@ async function create_tweets(topic='covid') {
              var user_tweets_sent = 'user-tweets-sentiment-canvas-' + loaded_tweets['tweets'][tweet_idx]['id_str'];
              var ctx = document.getElementById(user_tweets_sent);
              var data_array = [];
-             var labels = [];
+             var labels = ['negativo', 'positivo'];
              for (let key in user_tweets_analysis['sentiment']) {
-                 data_array.push(parseFloat(user_tweets_analysis['sentiment'][key]))
-                 labels.push(key)
+                 data_array.push(Math.round((parseFloat(user_tweets_analysis['sentiment'][key]) + Number.EPSILON) * 100))
+                 // labels.push(key)
              }
              var myChart = new Chart(ctx, {
                  type: 'doughnut',
@@ -706,8 +740,12 @@ async function create_tweets(topic='covid') {
                  options: {
                      responsive: true,
                      //maintainAspectRatio: false,
+                     title: {
+                        display: true,
+                        text: 'sentimento'
+                     },
                      legend: {
-                         display: true,
+                         display: false,
                          position: 'right',
                          labels: {
                              fontColor: 'rgb(0,0,0)'
@@ -720,10 +758,10 @@ async function create_tweets(topic='covid') {
              var user_tweets_emotion = 'user-tweets-emotion-canvas-' + loaded_tweets['tweets'][tweet_idx]['id_str'];
              var ctx = document.getElementById(user_tweets_emotion);
              var data_array = [];
-             var labels = [];
+             var labels = ['rabbia', 'paura', 'gioia', 'tristezza'];
              for (let key in user_tweets_analysis['emotion']) {
-                 data_array.push(parseFloat(user_tweets_analysis['emotion'][key]))
-                 labels.push(key)
+                 data_array.push(Math.round((parseFloat(user_tweets_analysis['emotion'][key]) + Number.EPSILON) * 100))
+                 // labels.push(key)
              }
              var myChart = new Chart(ctx, {
                  type: 'doughnut',
@@ -743,8 +781,12 @@ async function create_tweets(topic='covid') {
                  options: {
                      responsive: true,
                      // maintainAspectRatio: false,
+                     title: {
+                        display: true,
+                        text: 'emozioni'
+                     },
                      legend: {
-                         display: true,
+                         display: false,
                          position: 'right',
                          labels: {
                              fontColor: 'rgb(0,0,0)'

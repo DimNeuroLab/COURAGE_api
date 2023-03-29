@@ -424,10 +424,10 @@ def identify_echo_chambers():
     return jsonify(echo_chambers), status_code
 
 
-@api_blueprint.route("load_topic_data_IT/", methods=["POST"])
-def load_topic_data_IT():
+@api_blueprint.route("load_topic_data_EXP/", methods=["POST"])
+def load_topic_data_EXP():
     """
-    Load tweets on specific topic for Italian demo page.
+    Load tweets on specific topic for language specific demo page.
     """
     data = request.json
     if 'topic' in data:
@@ -437,14 +437,21 @@ def load_topic_data_IT():
         # no topic posted
         status_code = 400
         return status_code
-    topics_available = [topic_name.split('.')[0] for topic_name in os.listdir(get_working_dir() + '/app/webapp/italian_demo/data/topics/')
+    lang = 'it'
+    if 'lang' in data and data['lang'] in ['it', 'en']:
+        lang = data['lang']
+    if lang == 'it':
+        lang = 'italian'
+    elif lang == 'en':
+        lang = 'english'
+    topics_available = [topic_name.split('.')[0] for topic_name in os.listdir(get_working_dir() + '/app/webapp/' + lang + '_demo/data/topics/')
                         if topic_name.endswith('json')]
     if topic not in topics_available:
         status_code = 200
         tweet_results = {'tweets': [], 'analysis': []}
         return jsonify(tweet_results), status_code
     try:
-        with open(get_working_dir() + '/app/webapp/italian_demo/data/topics/' + topic + '.json') as json_file:
+        with open(get_working_dir() + '/app/webapp/' + lang + '_demo/data/topics/' + topic + '.json') as json_file:
             tweet_data = json.load(json_file)
         if n > 0:
             idc = random.sample(range(len(tweet_data['tweets'])), n)
@@ -455,6 +462,13 @@ def load_topic_data_IT():
             status_code = 200
             return jsonify(tweet_results), status_code
         else:
+            if lang == 'english':
+                data = list(zip(tweet_data['tweets'], tweet_data['analysis']))
+                random.Random(4).shuffle(data)
+                tweets, analysis = zip(*data)
+                tweet_data = {}
+                tweet_data['tweets'] = tweets
+                tweet_data['analysis'] = analysis
             status_code = 200
             return jsonify(tweet_data), status_code
     except:
@@ -462,10 +476,10 @@ def load_topic_data_IT():
         return status_code
 
 
-@api_blueprint.route("load_user_data_IT/", methods=["POST"])
-def load_user_data_IT():
+@api_blueprint.route("load_user_data_EXP/", methods=["POST"])
+def load_user_data_EXP():
     """
-    Load tweets of specific user for Italian demo page.
+    Load tweets of specific user for language specific demo page.
     """
     data = request.json
     if 'user_id' in data:
@@ -474,8 +488,15 @@ def load_user_data_IT():
         # no user id posted
         status_code = 400
         return status_code
+    lang = 'it'
+    if 'lang' in data and data['lang'] in ['it', 'en']:
+        lang = data['lang']
+    if lang == 'it':
+        lang = 'italian'
+    elif lang == 'en':
+        lang = 'english'
     try:
-        file_path = get_working_dir() + '/app/webapp/italian_demo/data/users/' + user_id + '.json'
+        file_path = get_working_dir() + '/app/webapp/' + lang + '_demo/data/users/' + user_id + '.json'
         if os.path.isfile(file_path):
             with open(file_path) as json_file:
                 tweet_data = json.load(json_file)
@@ -490,10 +511,10 @@ def load_user_data_IT():
         return status_code
 
 
-@api_blueprint.route("load_user_following_data_IT/", methods=["POST"])
-def load_user_following_data_IT():
+@api_blueprint.route("load_user_following_data_EXP/", methods=["POST"])
+def load_user_following_data_EXP():
     """
-    Load list of following ids of specific user for Italian demo page.
+    Load list of following ids of specific user for language specific demo page.
     """
     data = request.json
     if 'user_id' in data:
@@ -502,8 +523,15 @@ def load_user_following_data_IT():
         # no user id posted
         status_code = 400
         return status_code
+    lang = 'it'
+    if 'lang' in data and data['lang'] in ['it', 'en']:
+        lang = data['lang']
+    if lang == 'it':
+        lang = 'italian'
+    elif lang == 'en':
+        lang = 'english'
     try:
-        file_path = get_working_dir() + '/app/webapp/italian_demo/data/following/' + user_id + '.json'
+        file_path = get_working_dir() + '/app/webapp/' + lang + '_demo/data/following/' + user_id + '.json'
         if os.path.isfile(file_path):
             with open(file_path) as json_file:
                 tweet_data = json.load(json_file)
