@@ -69,7 +69,7 @@ function image_exists(image_url){
 }
 
 
-async function create_tweets(topic='covid') {
+async function create_tweets(topic='experiment') {
 
     var loaded_tweets = await getTweetDataIT(topic);
 
