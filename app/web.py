@@ -34,6 +34,12 @@ def show_italian_twitter_demo_plain():
     return render_template("/italian_demo/italian_twitter_demo_plain.html")
 
 
+@web_blueprint.route("/twitter_demo_it_schools", methods=["GET"])
+def show_italian_twitter_demo_schools():
+    """returns the twitter demo page with fake news and misinformation decorations"""
+    return render_template("/italian_demo/italian_twitter_demo_schools.html")
+
+
 @web_blueprint.route("/twitter_demo_it_nb_e1", methods=["GET"])
 def show_italian_twitter_demo_no_buttons_experiment1():
     """returns the twitter demo page without buttons for experiment 1"""

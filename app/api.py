@@ -462,7 +462,7 @@ def load_topic_data_EXP():
             status_code = 200
             return jsonify(tweet_results), status_code
         else:
-            if lang == 'english':
+            if lang == 'english' or lang == 'italian':
                 data = list(zip(tweet_data['tweets'], tweet_data['analysis']))
                 random.Random(4).shuffle(data)
                 tweets, analysis = zip(*data)
