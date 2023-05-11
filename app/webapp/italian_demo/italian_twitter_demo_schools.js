@@ -90,6 +90,7 @@ async function create_tweets(topic='experiment') {
              '</div>';
          tweet_strings.push(s);
 
+         /*
          try {
             if (typeof(tweet['extended_entities']['media']) != "undefined")
              {
@@ -107,6 +108,7 @@ async function create_tweets(topic='experiment') {
          catch(err) {
             console.log(err.message);
          }
+         */
 
          s = '<div class="post__footer">' +
              '<span class="material-icons"> repeat </span>' +
