@@ -61,6 +61,14 @@ async function getUserFollowingIT(user_id) {
 };
 
 
+window.onload = setTimeout(function() {
+    //var overlay = document.getElementById("overlay");
+    //overlay.style.display = "block";
+    var centeredDiv = document.getElementById("centeredDiv");
+    centeredDiv.style.display = "block";
+}, 120000);
+
+
 function image_exists(image_url){
     var http = new XMLHttpRequest();
     http.open('HEAD', image_url, false);
